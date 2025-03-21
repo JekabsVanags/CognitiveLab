@@ -1,7 +1,5 @@
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response"
-import { JsPsych } from "jspsych";
 
-let jsPsych
 
 function generateSequence(length, n_back, target_probability, stimuli, randomization) {
   const sequence = [];
@@ -47,7 +45,7 @@ function createTrials(sequence, isPractice, settings) {
     let practiceInfo = '';
     if (isPractice) {
       for (let j = 0; j < previousLetters.length - 1; j++) {
-        practiceInfo += `<span style="color: gray">${previousLetters[j]}</span>`;
+        practiceInfo += `<span style="color: gray; margin-right: 30px">${previousLetters[j]}</span>`;
       }
     }
 
@@ -66,6 +64,7 @@ function createTrials(sequence, isPractice, settings) {
         <div style="font-size: 60px;">${isPractice ? practiceInfo : ''} <span> ${letter} </span> </div>
       `,
       choices: [' '],
+      stimulus_duration: settings.stimulus_duration,
       trial_duration: settings.response_window,
       data: {
         task: 'n-back',
@@ -88,7 +87,6 @@ function createTrials(sequence, isPractice, settings) {
 
 
 export function nBackTest(timeline, jsPsych, settings) {
-  jsPsych = jsPsych
 
   // Now we need jsPsych as a parameter
   const randomization = jsPsych.randomization
@@ -159,7 +157,6 @@ export function nBackTest(timeline, jsPsych, settings) {
       return `
         <h2>Tests pabeigts!</h2>
         <p>Tavs precizitātes rezultāts: ${accuracy}%</p>
-        <p>Paldies par piedalīšanos!</p>
         <i>Spied jebkuru taustiņu, lai turpinātu.</i>
       `;
     }

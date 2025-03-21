@@ -15,6 +15,7 @@ import PreloadPlugin from "@jspsych/plugin-preload";
 import { initJsPsych } from "jspsych";
 import { introScreens } from "./intro";
 import { nBackTest } from "./experiment_modules.js/nBack";
+import { visualSearchTest } from "./experiment_modules.js/visualSearching";
 
 /**
  * This function will be executed by jsPsych Builder and is expected to run the jsPsych experiment
@@ -45,6 +46,22 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     response_window: 3000,
     target_probability: 0.3 // How many matches % will be generated
   })
+
+  visualSearchTest(timeline, jsPsych, {
+    symbol: "T",
+    color: "red",
+    flip: false,
+    symbol_variations: ["T", "U"],
+    color_variations: ["red", "blue", "red"],
+    use_flip_variations: true,
+    grid_size: 5,
+    element_counts: [5, 10, 15, 20],
+    response_window: 2000,
+    practice_trials: 10,
+    test_trials: 50,
+    target_probability: 0.5
+  })
+
 
   await jsPsych.run(timeline);
 
