@@ -60,7 +60,7 @@ function generateStimuli(count, randomization, settings) {
 
 function generateTrials(stimuli, isPractice, settings) {
   const trials = []
-  stimuli.forEach((stim) => {
+  stimuli.forEach((stim, i) => {
     const trial = {
       type: HtmlKeyboardResponsePlugin,
       stimulus:
@@ -71,14 +71,15 @@ function generateTrials(stimuli, isPractice, settings) {
         task: 'visualSearch',
         numberOfItems: stim.itemCount,
         containsTarget: stim.containsTarget,
+        trial_index: i,
         phase: isPractice ? 'practice' : 'test'
       },
       on_finish: function (data) {
         data.correct = (data.response !== null && stim.containsTarget) ||
           (data.response === null && !stim.containsTarget);
 
-        //Save response time
         data.reaction_time = data.rt !== null ? data.rt : settings.response_window;
+        data.timed_out = data.rt === null;
       }
     }
 

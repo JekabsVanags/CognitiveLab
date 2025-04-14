@@ -76,6 +76,9 @@ function createTrials(sequence, isPractice, settings) {
       on_finish: function (data) {
         data.correct = (data.response !== null && isTarget) ||
           (data.response === null && !isTarget);
+
+        data.reaction_time = data.rt !== null ? data.rt : settings.response_window;
+        data.timed_out = data.rt === null;
       }
     };
 
