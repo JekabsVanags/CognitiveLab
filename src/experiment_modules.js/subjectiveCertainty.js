@@ -26,7 +26,7 @@ export function subjectiveCertainty(timeline, jsPsych) {
     type: surveyHtmlForm,
     html: `<p>Vai tu pēdējā gada laikā esi plānojis ceļojumu uz ārzemēm, kas ilgu ilgāk par 6 dienām?</p>
            <label><input name="answer" type="radio" value="Jā" required> Jā</label><br>
-           <label><input name="answer" type="radio" value="Nē"> Nē</label><br>`,
+           <label><input name="answer" type="radio" value="Nē"> Nē</label><br> <br>`,
     on_finish: function (data) {
       if (data.response.answer == "Jā") {
         jsPsych.data.addProperties({ "hasPlannedATrip": true })
@@ -41,7 +41,7 @@ export function subjectiveCertainty(timeline, jsPsych) {
     type: surveyHtmlForm,
     html: `<p>Vai tu pēdējo 3 gadu laikā esi bijis ceļojumā kādā no Dienvidamerikas valstīm?</p>
            <label><input name="answer" type="radio" value="Jā" required> Jā</label><br>
-           <label><input name="answer" type="radio" value="Nē"> Nē</label><br>`,
+           <label><input name="answer" type="radio" value="Nē"> Nē</label><br> <br>`,
     on_finish: function (data) {
       if (data.response.answer == "Jā") {
         jsPsych.data.addProperties({ "hasBeenToAmerica": true })
@@ -56,7 +56,6 @@ export function subjectiveCertainty(timeline, jsPsych) {
   timeline.push({
     type: HtmlKeyboardResponsePlugin,
     stimulus: function () {
-      console.log(jsPsych.data)
       const hasBeenToAmerica = jsPsych.data.dataProperties.hasBeenToAmerica;
       const hasPlannedATrip = jsPsych.data.dataProperties.hasPlannedATrip;
 
@@ -99,6 +98,10 @@ export function subjectiveCertainty(timeline, jsPsych) {
       type: SurveyTextPlugin,
       questions: [{ prompt: task.prompt, rows: 10, columns: 80 }],
       trial_duration: task.duration,
+      data: {
+        task: "subjectiveCertainty",
+        question_type: "answer"
+      },
       on_load: function () {
         const duration = jsPsych.getCurrentTrial().trial_duration;
         const container = document.createElement("div");
@@ -123,7 +126,6 @@ export function subjectiveCertainty(timeline, jsPsych) {
           responses.id = "previous-responses";
           const responseData = jsPsych.data.get().trials.filter((d) => d.trial_type === "survey-text");
           responses.innerHTML = "";
-          console.log(responseData);
           responseData.forEach((response) => {
             if (response.task_id && tasks[response.task_id - 1]) { // Pievienota pārbaude
               const question = tasks[response.task_id - 1].prompt;
@@ -149,6 +151,7 @@ export function subjectiveCertainty(timeline, jsPsych) {
               document.getElementById("previous-responses").style.visibility = 'hidden';
               previousResponseButton.innerHTML = "Rādīt iepriekšējo jautājumu atbildes";
             } else {
+              jsPsych.data.addProperties({ "accessedPreviousAnswer": true })
               document.getElementById("previous-responses").style.visibility = 'visible';
               previousResponseButton.innerHTML = "Slēpt iepriekšējo jautājumu atbildes";
             }
@@ -183,6 +186,9 @@ export function subjectiveCertainty(timeline, jsPsych) {
         ],
         required: true,
       }],
+      data: {
+        task: "subjectiveCertainty"
+      },
       on_finish: function (data) {
         data.task_id = task.id;
         data.question_type = "confidence";
@@ -194,7 +200,10 @@ export function subjectiveCertainty(timeline, jsPsych) {
       type: surveyHtmlForm,
       html: `<p>Vai, pildot šo uzdevumu, tu izmantoji kādu LLM rīku (piemēram, ChatGPT)?</p>
              <label><input name="llm_used" type="radio" value="Jā" required> Jā</label><br>
-             <label><input name="llm_used" type="radio" value="Nē"> Nē</label><br>`,
+             <label><input name="llm_used" type="radio" value="Nē"> Nē</label><br> <br>`,
+      data: {
+        task: "subjectiveCertainty"
+      },
       on_finish: function (data) {
         data.task_id = task.id;
         data.question_type = "llm_use";
@@ -214,6 +223,9 @@ export function subjectiveCertainty(timeline, jsPsych) {
         ],
         required: true,
       }],
+      data: {
+        task: "subjectiveCertainty"
+      },
       on_finish: function (data) {
         data.task_id = task.id;
         data.question_type = "llm_usage_level"; // Labots question_type

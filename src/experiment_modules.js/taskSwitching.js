@@ -55,7 +55,7 @@ function generateTrials(stimuli, isPractice, settings, jsPsych) {
         task: "taskSwitching",
         taskType: stim.taskType ? "form" : "fill",
         repeatTask: jsPsych.data.get().last(1).values()[0]?.taskType === stim.taskType ?? false,
-        isTarget: stim.targetReaction,
+        targetReaction: stim.targetReaction ? settings.reaction_buttons[0] : settings.reaction_buttons[1],
         trial_index: i,
         phase: isPractice ? "practice" : "test",
       },

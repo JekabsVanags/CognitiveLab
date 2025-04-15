@@ -9,7 +9,6 @@
 // You can import stylesheets (.scss or .css).
 import "../styles/main.scss";
 
-import FullscreenPlugin from "@jspsych/plugin-fullscreen";
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 import PreloadPlugin from "@jspsych/plugin-preload";
 import { initJsPsych } from "jspsych";
@@ -18,6 +17,7 @@ import { nBackTest } from "./experiment_modules.js/nBack";
 import { visualSearchTest } from "./experiment_modules.js/visualSearching";
 import { taskSwitchingExperiment } from "./experiment_modules.js/taskSwitching";
 import { subjectiveCertainty } from "./experiment_modules.js/subjectiveCertainty";
+import dataProcessing from "./data";
 
 /**
  * This function will be executed by jsPsych Builder and is expected to run the jsPsych experiment
@@ -26,6 +26,16 @@ import { subjectiveCertainty } from "./experiment_modules.js/subjectiveCertainty
  */
 export async function run({ assetPaths, input = {}, environment, title, version }) {
   const jsPsych = initJsPsych();
+
+  const data_processing = {
+    type: HtmlKeyboardResponsePlugin,
+    stimulus: "Dati",
+    on_load: function () {
+      const filtered = jsPsych.data.get().trials.filter((d) => d.task != null)
+      const data = filtered.map((d) => dataProcessing(d)).filter((item) => item !== null)
+      console.log(data)
+    }
+  }
 
   const timeline = []
 
@@ -37,47 +47,52 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     video: assetPaths.video,
   });
 
-  // introScreens(timeline)
+  introScreens(timeline)
 
-  // nBackTest(timeline, jsPsych, {
-  //   n_back: 2, //How many back need to remember
-  //   stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
-  //   practice_trials: 10,
-  //   test_trials: 30,
-  //   stimulus_duration: 500,
-  //   response_window: 3000,
-  //   target_probability: 0.3 // How many matches % will be generated
-  // })
+  timeline.push(data_processing)
 
-  // visualSearchTest(timeline, jsPsych, {
-  //   symbol: "T",
-  //   color: "red",
-  //   flip: false,
-  //   symbol_variations: ["T", "U"],
-  //   color_variations: ["red", "blue", "red"],
-  //   use_flip_variations: true,
-  //   grid_size: 5,
-  //   element_counts: [5, 10, 15, 20],
-  //   response_window: 2000,
-  //   practice_trials: 10,
-  //   test_trials: 50,
-  //   target_probability: 0.5
-  // })
+  nBackTest(timeline, jsPsych, {
+    n_back: 2, //How many back need to remember
+    stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
+    practice_trials: 10,
+    test_trials: 10, //Aizvietot ar 30
+    stimulus_duration: 500,
+    response_window: 3000,
+    target_probability: 0.3 // How many matches % will be generated
+  })
 
-  // taskSwitchingExperiment(timeline, jsPsych, {
-  //   target_color: "red",
-  //   target_symbol: "X",
-  //   symbol_variations: ["T", "U"],
-  //   color_variations: ["green", "blue"],
-  //   reaction_buttons: ["b", "n"],
-  //   practice_trials: 10,
-  //   test_trials: 50,
-  //   target_probability: 0.5,
-  //   response_window: 5000,
-  // })
+
+  visualSearchTest(timeline, jsPsych, {
+    symbol: "T",
+    color: "red",
+    flip: false,
+    symbol_variations: ["T", "U"],
+    color_variations: ["red", "blue", "red"],
+    use_flip_variations: true,
+    grid_size: 5,
+    element_counts: [5, 10, 15, 20],
+    response_window: 2000,
+    practice_trials: 10,
+    test_trials: 10, //Aizvietot ar 50
+    target_probability: 0.5
+  })
+
+  taskSwitchingExperiment(timeline, jsPsych, {
+    target_color: "red",
+    target_symbol: "X",
+    symbol_variations: ["T", "U"],
+    color_variations: ["green", "blue"],
+    reaction_buttons: ["b", "n"],
+    practice_trials: 10,
+    test_trials: 10, //Aizvietot ar 50
+    target_probability: 0.5,
+    response_window: 5000,
+  })
+
 
   subjectiveCertainty(timeline, jsPsych)
 
+  timeline.push(data_processing)
 
   await jsPsych.run(timeline);
 

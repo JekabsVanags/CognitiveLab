@@ -1,5 +1,6 @@
 import FullscreenPlugin from "@jspsych/plugin-fullscreen";
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
+import SurveyHtmlFormPlugin from "@jspsych/plugin-survey-html-form";
 
 export function introScreens(timeline) {
   const welcomeScreen = {
@@ -10,6 +11,15 @@ export function introScreens(timeline) {
       <i>Lai turpinātu lūdzu spiediet jebkutu taustiņu</i>`,
   }
 
+  const idScreen = {
+    type: SurveyHtmlFormPlugin,
+    html: `<p>Lūgums ievadīt epastu, caur kuru pieteicies uz klātienes eksperimentu</p>
+           <label>Epasts: </label><input name="answer" type="text" required> <br> <br>`,
+    data: {
+      task: "email"
+    },
+  }
+
   const fullExplanation = {
     type: FullscreenPlugin,
     message:
@@ -18,5 +28,5 @@ export function introScreens(timeline) {
     button_label: "Sākt"
   }
 
-  timeline.push(welcomeScreen, fullExplanation);
+  timeline.push(welcomeScreen, idScreen, fullExplanation);
 }
