@@ -2,7 +2,7 @@ import FullscreenPlugin from "@jspsych/plugin-fullscreen";
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 import SurveyHtmlFormPlugin from "@jspsych/plugin-survey-html-form";
 
-export function introScreens(timeline) {
+export function introScreens(timeline, jsPsych) {
   const welcomeScreen = {
     type: HtmlKeyboardResponsePlugin,
     stimulus:
@@ -18,6 +18,9 @@ export function introScreens(timeline) {
     data: {
       task: "email"
     },
+    on_finish: function (data) {
+      jsPsych.data.addProperties({ "email": data.response.answer })
+    }
   }
 
   const fullExplanation = {
