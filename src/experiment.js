@@ -74,37 +74,35 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     video: assetPaths.video,
   });
 
-  timeline.push()
-
   introScreens(timeline, jsPsych)
 
-  nBackTest(timeline, jsPsych, {
-    n_back: 2, //How many back need to remember
-    stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
+  // nBackTest(timeline, jsPsych, {
+  //   n_back: 2, //How many back need to remember
+  //   stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
+  //   practice_trials: 10,
+  //   test_trials: 30,
+  //   stimulus_duration: 500,
+  //   response_window: 3000,
+  //   target_probability: 0.3 // How many matches % will be generated
+  // })
+
+
+  visualSearchTest(timeline, jsPsych, {
+    symbol: "T",
+    color: "red",
+    flip: false,
+    symbol_variations: ["T", "U"],
+    color_variations: ["red", "blue", "red"],
+    use_flip_variations: true,
+    grid_size: 5,
+    element_counts: [5, 10, 15, 20],
+    response_window: 2000,
     practice_trials: 10,
-    test_trials: 10, //Aizvietot ar 30
-    stimulus_duration: 500,
-    response_window: 3000,
-    target_probability: 0.3 // How many matches % will be generated
+    test_trials: 10, //Aizvietot ar 50
+    target_probability: 0.5
   })
 
   timeline.push(data_processing(jsPsych));
-
-
-  // visualSearchTest(timeline, jsPsych, {
-  //   symbol: "T",
-  //   color: "red",
-  //   flip: false,
-  //   symbol_variations: ["T", "U"],
-  //   color_variations: ["red", "blue", "red"],
-  //   use_flip_variations: true,
-  //   grid_size: 5,
-  //   element_counts: [5, 10, 15, 20],
-  //   response_window: 2000,
-  //   practice_trials: 10,
-  //   test_trials: 10, //Aizvietot ar 50
-  //   target_probability: 0.5
-  // })
 
   // taskSwitchingExperiment(timeline, jsPsych, {
   //   target_color: "red",

@@ -35,12 +35,13 @@ export function nBackTest(timeline, jsPsych, settings) {
     type: HtmlKeyboardResponsePlugin,
     stimulus: `
       <b>N-Back īstermiņa atmiņas tests</b>
-      <p>Lai palīdzētu Tev apgūt šī testa principu, sākumā tiks rādīta informācija par iepriekšējiem burtiem. Pēc 10 mēģinājumiem šī palīdzība pazudīs, un Tev būs jāpaļaujas uz savu atmiņu.</p>
+      <p>Lai palīdzētu Tev apgūt šī testa principu, sākumā tiks rādīta informācija par iepriekšējiem burtiem.</p>
+      <p>Pēc 10 mēģinājumiem šī palīdzība pazudīs, un Tev būs jāpaļaujas uz savu atmiņu.</p>
       <i>Spied jebkuru taustiņu, lai turpinātu.</i>
        `
   }
 
-  //===Experiment step that starts the training===//
+  //===Experiment step that starts the practice===//
   const practiceStart = {
     type: HtmlKeyboardResponsePlugin,
     stimulus: `
@@ -70,7 +71,7 @@ export function nBackTest(timeline, jsPsych, settings) {
     stimulus: `
         <h2>Treniņa daļa pabeigta!</h2>
         <p>Tālāk mēģini atcerēties iepriekšējo burtu bez palīdzības!</p>
-        <i>Spied jebkuru taustiņu, lai turpinātu.</i>
+        <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
       `
   };
 
