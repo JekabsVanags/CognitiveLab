@@ -24,19 +24,46 @@ import { databasePreparing, dataProcessing } from "./data";
  *
  * @type {import("jspsych-builder").RunFunction}
  */
-export async function run({ assetPaths, input = {}, environment, title, version }) {
-  const jsPsych = initJsPsych();
 
-  const data_processing = {
-    type: HtmlKeyboardResponsePlugin,
-    stimulus: "Dati tiek apstrādāti un saglabāti",
-    on_load: function () {
-      const filtered = jsPsych.data.get().trials.filter((d) => d.task != null)
-      const data = filtered.map((d) => dataProcessing(d)).filter((item) => item !== null)
-      console.log(data)
+//===Experiment step that processes the data of experiments till then===//
+const data_processing = (jsPsych) => {
+  return (
+    {
+      type: HtmlKeyboardResponsePlugin,
+      stimulus: "Dati tiek apstrādāti un saglabāti",
+      on_load: function () {
+
+        //Filter out the significant data (ones that are tied to a task)
+        const filtered = jsPsych.data.get().trials.filter((d) => d.task != null)
+
+        //For each record process it (save to DB) and show in console as JSON
+        const data = filtered.map((d) => dataProcessing(d)).filter((item) => item !== null)
+        console.log(data)
+      }
     }
-  }
+  )
+}
 
+//===Experiment step that creates the database tables necessary for the experiment===/
+const database_preparing = {
+  type: HtmlKeyboardResponsePlugin,
+  stimulus: "Sagatavo DB eksperimenta datu ievākšanai",
+  on_load: function () {
+    const experiments = ["nBack", "visualSearch", "taskSwitching", "subjectiveCertainty"]
+    databasePreparing(experiments)
+  }
+}
+
+/**Currently available experiments:
+ * - nBack (fucntion name: nBackTest)
+ * - visualSearch (function name: visualSearchTest)
+ * - taskSwitching (function name: taskSwitchingExperiment)
+ * - subjectiveCertainty (function name: subjectiveCertainty)
+ */
+
+export async function run({ assetPaths, input = {}, environment, title, version }) {
+  //Create new experiment timeline
+  const jsPsych = initJsPsych();
   const timeline = []
 
   // Preload
@@ -47,26 +74,21 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     video: assetPaths.video,
   });
 
-  timeline.push({
-    type: HtmlKeyboardResponsePlugin,
-    stimulus: "Sagatavo DB eksperimenta datu ievākšanai",
-    on_load: function () {
-      const experiments = ["nBack", "visualSearch", "taskSwitching", "subjectiveCertainty"]
-      databasePreparing(experiments)
-    }
-  })
+  timeline.push()
 
   introScreens(timeline, jsPsych)
 
-  // nBackTest(timeline, jsPsych, {
-  //   n_back: 2, //How many back need to remember
-  //   stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
-  //   practice_trials: 10,
-  //   test_trials: 10, //Aizvietot ar 30
-  //   stimulus_duration: 500,
-  //   response_window: 3000,
-  //   target_probability: 0.3 // How many matches % will be generated
-  // })
+  nBackTest(timeline, jsPsych, {
+    n_back: 2, //How many back need to remember
+    stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
+    practice_trials: 10,
+    test_trials: 10, //Aizvietot ar 30
+    stimulus_duration: 500,
+    response_window: 3000,
+    target_probability: 0.3 // How many matches % will be generated
+  })
+
+  timeline.push(data_processing(jsPsych));
 
 
   // visualSearchTest(timeline, jsPsych, {
@@ -96,9 +118,9 @@ export async function run({ assetPaths, input = {}, environment, title, version 
   //   response_window: 5000,
   // })
 
-  subjectiveCertainty(timeline, jsPsych)
+  // subjectiveCertainty(timeline, jsPsych)
 
-  timeline.push(data_processing)
+  // timeline.push(data_processing)
 
   await jsPsych.run(timeline);
 

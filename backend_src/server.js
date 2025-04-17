@@ -8,8 +8,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-console.log("Yser", process.env.DB_USER)
-
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -54,14 +52,12 @@ app.post('/api/experiment/insert_data', (req, res) => {
   if (!req.body) {
     return res.status(400).json({ error: 'Missing data' });
   }
-  console.log(req.body)
 
   const keys = Object.keys(data);
   const values = Object.values(data);
 
 
   const sql = `INSERT INTO ${task} (email${keys.length > 0 ? ',' : ''} ${keys.join(", ")}) VALUES ('${email}'${values.length > 0 ? ',' : ''} ${values.join(", ")});`;
-  console.log(sql)
 
   connection.query(sql, [], (error, results) => {
     if (error) {
