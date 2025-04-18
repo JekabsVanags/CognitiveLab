@@ -184,19 +184,16 @@ function createTrials(sequence, isPractice, settings) {
       stimulus_duration: settings.stimulus_duration,
       trial_duration: settings.response_window,
       data: {
-        task: 'n-back',
+        task: 'nBack',
         letter: letter,
-        is_target: isTarget,
-        trial_index: i,
+        isTarget: isTarget,
+        trialIndex: i,
         phase: isPractice ? 'practice' : 'test'
       },
       on_finish: function (data) {
         //If responded correctly
         data.correct = (data.response !== null && isTarget) ||
           (data.response === null && !isTarget);
-
-        //How fast responded
-        data.reaction_time = data.rt !== null ? data.rt : settings.response_window;
       }
     };
 

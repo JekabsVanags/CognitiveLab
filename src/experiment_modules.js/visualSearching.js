@@ -92,7 +92,7 @@ export function visualSearchTest(timeline, jsPsych, settings) {
     completionPracticeScreen,
     testStart,
     ...testTrials,
-    completionScreen)
+    completionScreen);
 };
 
 //===Helper function to generate all possible coordinates in a grid of x*x===//
@@ -180,16 +180,13 @@ function generateTrials(stimuli, isPractice, settings) {
         task: 'visualSearch',
         numberOfItems: stim.itemCount,
         containsTarget: stim.containsTarget,
-        trial_index: i,
+        trialIndex: i,
         phase: isPractice ? 'practice' : 'test'
       },
       on_finish: function (data) {
         //If responded correctly
         data.correct = (data.response !== null && stim.containsTarget) ||
           (data.response === null && !stim.containsTarget);
-
-        //How fast responded
-        data.reaction_time = data.rt !== null ? data.rt : settings.response_window;
       }
     }
 

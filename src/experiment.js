@@ -74,18 +74,19 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     video: assetPaths.video,
   });
 
+  //===Place the experiment functions here===//
+
   introScreens(timeline, jsPsych)
 
-  // nBackTest(timeline, jsPsych, {
-  //   n_back: 2, //How many back need to remember
-  //   stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
-  //   practice_trials: 10,
-  //   test_trials: 30,
-  //   stimulus_duration: 500,
-  //   response_window: 3000,
-  //   target_probability: 0.3 // How many matches % will be generated
-  // })
-
+  nBackTest(timeline, jsPsych, {
+    n_back: 2, //How many back need to remember
+    stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
+    practice_trials: 10,
+    test_trials: 30,
+    stimulus_duration: 500,
+    response_window: 3000,
+    target_probability: 0.3 // How many matches % will be generated
+  })
 
   visualSearchTest(timeline, jsPsych, {
     symbol: "T",
@@ -102,24 +103,20 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     target_probability: 0.5
   })
 
+  taskSwitchingExperiment(timeline, jsPsych, {
+    reaction_buttons: ["b", "n"],
+    practice_trials: 10,
+    test_trials: 10, //Aizvietot ar 50
+    target_probability: 0.5,
+    response_window: 5000,
+  })
+
+  subjectiveCertainty(timeline, jsPsych)
+
+  //===Proceses the data===//
   timeline.push(data_processing(jsPsych));
 
-  // taskSwitchingExperiment(timeline, jsPsych, {
-  //   target_color: "red",
-  //   target_symbol: "X",
-  //   symbol_variations: ["T", "U"],
-  //   color_variations: ["green", "blue"],
-  //   reaction_buttons: ["b", "n"],
-  //   practice_trials: 10,
-  //   test_trials: 10, //Aizvietot ar 50
-  //   target_probability: 0.5,
-  //   response_window: 5000,
-  // })
-
-  // subjectiveCertainty(timeline, jsPsych)
-
-  // timeline.push(data_processing)
-
+  //===Launches the experiment===//
   await jsPsych.run(timeline);
 
   return jsPsych;

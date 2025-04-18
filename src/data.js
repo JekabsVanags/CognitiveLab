@@ -7,7 +7,7 @@ export function dataProcessing(trial) {
   if (trial.task === "email") {
     return processEmailTask(trial);
   }
-  else if (trial.task === "n-back" && trial.phase === "test") {
+  else if (trial.task === "nBack" && trial.phase === "test") {
     return processNBackTask(trial);
   }
   else if (trial.task === "visualSearch" && trial.phase === "test") {
@@ -41,11 +41,11 @@ function processNBackTask(trial) {
   const data = {
     task: "nBack",
     email: trial.email,
-    is_target: trial.is_target ?? null,
+    is_target: trial.isTarget ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
     stim: `'${trial.letter}'` ?? 'null',
-    trial_index: trial.trial_index
+    trial_index: trial.trialIndex
   };
 
   saveToDatabase(data);
@@ -61,7 +61,7 @@ function processVisualSearchTask(trial) {
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
     stim_count: trial.numberOfItems ?? 0,
-    trial_index: trial.trial_index
+    trial_index: trial.trialIndex
   };
 
   saveToDatabase(data);
@@ -78,7 +78,7 @@ function processTaskSwitchingTask(trial) {
     task_repeated: trial.repeatTask ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
-    trial_index: trial.trial_index
+    trial_index: trial.trialIndex
   };
 
   saveToDatabase(data);
@@ -113,7 +113,7 @@ function processConfidenceQuestion(trial) {
     has_been_to_america: trial.hasBeenToAmerica ?? null,
     has_planned_a_trip: trial.hasPlannedATrip ?? null,
     accessed_previous_answers: trial.accessedPreviousAnswer ?? false,
-    trial_index: trial.trial_index
+    trial_index: trial.trialIndex
   };
 
   saveToDatabase(data);
@@ -126,11 +126,11 @@ function processLLMUsageQuestion(trial) {
     task: "subjectiveCertaintyLLMUsageLevel",
     email: trial.email,
     response: trial.response.Q0 ?? null,
-    task_id: trial.task_id,
+    task_id: trial.taskId,
     has_been_to_america: trial.hasBeenToAmerica ?? null,
     has_planned_a_trip: trial.hasPlannedATrip ?? null,
     accessed_previous_answers: trial.accessedPreviousAnswer ?? false,
-    trial_index: trial.trial_index
+    trial_index: trial.trialIndex
   };
 
   saveToDatabase(data);
@@ -148,7 +148,7 @@ function processAnswerQuestion(trial) {
     has_been_to_america: trial.hasBeenToAmerica ?? null,
     has_planned_a_trip: trial.hasPlannedATrip ?? null,
     accessed_previous_answers: trial.accessedPreviousAnswer ?? false,
-    trial_index: trial.trial_index
+    trial_index: trial.trialIndex
   };
 
   saveToDatabase(data);
