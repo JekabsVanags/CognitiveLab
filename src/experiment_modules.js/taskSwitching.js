@@ -21,8 +21,14 @@ export function taskSwitchingExperiment(timeline, jsPsych, settings) {
     stimulus: `
       <b>Uzdevumu pārslēgšanas tests</b>
        <p>Dažos mēģinājumos jāreaģē uz <b>pildījumu</b>, dažos uz <b>formu</b>.</p>
+       <p>Šajā uzdevumā mainīsies fona un stimulu krāsa.</p>
        <i>Spied jebkuru taustiņu, lai turpinātu.</i>
-       `
+       `,
+    on_finish: function () {
+      //Change the color
+      document.body.style.backgroundColor = "black";
+      document.body.style.color = "yellow";
+    }
   };
 
   //===Experiment step that explains reacting to filling===//
@@ -83,12 +89,15 @@ export function taskSwitchingExperiment(timeline, jsPsych, settings) {
   //===Experiment step that finishes the visualSearching experiment===//
   const completionScreen = {
     type: HtmlKeyboardResponsePlugin,
-    stimulus: function () {
-      return `
+    stimulus: `
         <h2>Tests pabeigts!</h2>
-        <i>Spied jebkuru taustiņu, lai turpinātu.</i>`;
+        <i>Spied jebkuru taustiņu, lai turpinātu.</i>
+        `,
+    on_finish: function () {
+      document.body.style.backgroundColor = "white";
+      document.body.style.color = "black";
     }
-  };
+  }
 
   //Generate the stimuli (images) for the experiment
   const practiceStimuli = generateTaskStimuli(settings.practice_trials, jsPsych.randomization, settings);
@@ -147,11 +156,11 @@ function generateTaskStimuli(count, randomization, settings) {
     //Generte the full sitmuli text
     const stimulus = `
     <b>forma</b>
-      <table style="border: 2px solid black; border-collapse: collapse; width: 80vw;">
-        <tr style="height: 30vh; text-align: center; vertical-align: middle;margin: 10px; border: 2px solid black;">
+      <table style="border: 2px solid yellow; border-collapse: collapse; width: 80vw;">
+        <tr style="height: 30vh; text-align: center; vertical-align: middle;margin: 10px; border: 2px solid yellow;">
           ${taskType ? `<td>${visual}</td>` : "<td></td>"}
         </tr>
-        <tr style="height: 30vh; text-align: center; vertical-align: middle; margin: 10px; border: 2px solid black;">
+        <tr style="height: 30vh; text-align: center; vertical-align: middle; margin: 10px; border: 2px solid yellow;">
           ${taskType ? "<td></td>" : `<td>${visual}</td>`}
         </tr>
       </table>
@@ -226,42 +235,42 @@ function generateTrials(stimuli, isPractice, settings, jsPsych) {
 //===Graphic, square with 3 points===// 
 let stim3 = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="27.44 41.464 153.213 153.213" width="153.213px" height="153.213px">
-  <rect x="27.44" y="41.464" width="153.213" height="153.213" style="stroke: rgb(0, 0, 0); stroke-width: 5px; fill: rgb(255, 255, 255);" transform="matrix(1, 0, 0, 1, 3.552713678800501e-15, 7.105427357601002e-15)"/>
+  <rect x="27.44" y="41.464" width="153.213" height="153.213" style="stroke: yellow; stroke-width: 5px; fill: black;" transform="matrix(1, 0, 0, 1, 3.552713678800501e-15, 7.105427357601002e-15)"/>
   <g transform="matrix(1, 0, 0, 1, 0.35150259733200073, 0.3119974434375763)">
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.695" cy="71.349" rx="17.802" ry="17.802"/>
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.695" cy="118.083" rx="17.802" ry="17.802"/>
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.695" cy="164.168" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.695" cy="71.349" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.695" cy="118.083" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.695" cy="164.168" rx="17.802" ry="17.802"/>
   </g>
 </svg>`
 
 //===Graphic, square with 2 points===// 
 let stim4 = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="29.935 223.539 153.213 153.213" width="153.213px" height="153.213px">
-  <rect x="29.935" y="223.539" width="153.213" height="153.213" style="stroke: rgb(0, 0, 0); stroke-width: 5px; fill: rgb(255, 255, 255);" transform="matrix(1, 0, 0, 1, 3.552713678800501e-15, 7.105427357601002e-15)"/>
+  <rect x="29.935" y="223.539" width="153.213" height="153.213" style="stroke: yellow; stroke-width: 5px; fill: black;" transform="matrix(1, 0, 0, 1, 3.552713678800501e-15, 7.105427357601002e-15)"/>
   <g transform="matrix(1, 0, 0, 1, 2.68850040435791, 1.4170091152191162)">
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.853" cy="252.319" rx="17.802" ry="17.802"/>
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.853" cy="345.138" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.853" cy="252.319" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.853" cy="345.138" rx="17.802" ry="17.802"/>
   </g>
 </svg>`
 
 //===Graphic, rhombus with 3 points===// 
 let stim1 = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="264.2245 9.7572 216.676 216.676" width="216.676px" height="216.676px">
-  <rect x="143.463" y="127.476" width="153.213" height="153.213" style="stroke: rgb(0, 0, 0); stroke-width: 5px; fill: rgb(255, 255, 255); transform-origin: 220.069px 204.081px 0px;" transform="matrix(-0.707107007504, -0.707107007504, 0.707107007504, -0.707107007504, 152.492777558565, -85.984446021676)"/>
+  <rect x="143.463" y="127.476" width="153.213" height="153.213" style="stroke: yellow; stroke-width: 5px; fill: black; transform-origin: 220.069px 204.081px 0px;" transform="matrix(-0.707107007504, -0.707107007504, 0.707107007504, -0.707107007504, 152.492777558565, -85.984446021676)"/>
   <g transform="matrix(1, 0, 0, 1, 268.86700439453125, 0.3362550735473633)">
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.695" cy="71.349" rx="17.802" ry="17.802"/>
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.695" cy="118.083" rx="17.802" ry="17.802"/>
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.695" cy="164.168" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.695" cy="71.349" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.695" cy="118.083" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.695" cy="164.168" rx="17.802" ry="17.802"/>
   </g>
 </svg>`
 
 //===Graphic, rhombus with 2 points===// 
 let stim2 = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="201.0775 217.9332 216.676 216.676" width="216.676px" height="216.676px">
-  <rect x="143.463" y="127.476" width="153.213" height="153.213" style="stroke: rgb(0, 0, 0); stroke-width: 5px; fill: rgb(255, 255, 255); transform-origin: 220.068px 204.081px 0px;" transform="matrix(-0.707107007504, -0.707107007504, 0.707107007504, -0.707107007504, 89.347481491745, 122.192286475956)"/>
+  <rect x="143.463" y="127.476" width="153.213" height="153.213" style="stroke: yellow; stroke-width: 5px; fill: black; transform-origin: 220.068px 204.081px 0px;" transform="matrix(-0.707107007504, -0.707107007504, 0.707107007504, -0.707107007504, 89.347481491745, 122.192286475956)"/>
   <g transform="matrix(1, 0, 0, 1, 205.56300354003906, 27.543201446533203)">
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.853" cy="252.319" rx="17.802" ry="17.802"/>
-    <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 255, 255);" cx="103.853" cy="345.138" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.853" cy="252.319" rx="17.802" ry="17.802"/>
+    <ellipse style="stroke: yellow; stroke-width: 4px; fill: black;" cx="103.853" cy="345.138" rx="17.802" ry="17.802"/>
   </g>
 </svg>`
 
@@ -270,10 +279,10 @@ let exampleTop = `
 <div style="display: flex; flex-direction: column; align-items: center;">
    <b>forma</b>
    <table style="border: 2px solid black; border-collapse: collapse; width: 80vw;">
-    <tbody><tr style="height: 10vh; text-align: center; margin: 10px; vertical-align: middle; border: 2px solid black; height: 30vh;">
+    <tbody><tr style="height: 10vh; text-align: center; margin: 10px; vertical-align: middle; border: 2px solid yellow; height: 30vh;">
       <td>${stim2}</td>
     </tr>
-    <tr style="height: 10vh; text-align: center; vertical-align: middle; border: 2px solid black;">
+    <tr style="height: 10vh; text-align: center; vertical-align: middle; border: 2px solid yellow;">
       <td></td>
     </tr>
   </tbody></table>
@@ -285,10 +294,10 @@ let exampleBottom = `
 <div style="display: flex; flex-direction: column; align-items: center;">
     <b>forma</b>
    <table style="border: 2px solid black; border-collapse: collapse; width: 80vw;">
-    <tbody><tr style="height: 10vh; text-align: center; vertical-align: middle; border: 2px solid black;">
+    <tbody><tr style="height: 10vh; text-align: center; vertical-align: middle; border: 2px solid yellow;">
       <td></td>
     </tr>
-    <tr style="height: 10vh; text-align: center; vertical-align: middle; border: 2px solid black; height: 30vh;">
+    <tr style="height: 10vh; text-align: center; vertical-align: middle; border: 2px solid yellow; height: 30vh;">
       <td>${stim3}</td>
     </tr>
   </tbody></table>

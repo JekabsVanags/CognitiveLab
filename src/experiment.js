@@ -74,39 +74,41 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     video: assetPaths.video,
   });
 
+  timeline.push(database_preparing)
+
   //===Place the experiment functions here===//
 
   introScreens(timeline, jsPsych)
 
   nBackTest(timeline, jsPsych, {
-    n_back: 2, //How many back need to remember
+    n_back: 2,
     stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
     practice_trials: 10,
     test_trials: 30,
     stimulus_duration: 500,
     response_window: 3000,
-    target_probability: 0.3 // How many matches % will be generated
+    target_probability: 0.3
   })
 
   visualSearchTest(timeline, jsPsych, {
     symbol: "T",
     color: "red",
     flip: false,
-    symbol_variations: ["T", "U"],
-    color_variations: ["red", "blue", "red"],
+    symbol_variations: ["T"],
+    color_variations: ["red", "blue"],
     use_flip_variations: true,
     grid_size: 5,
     element_counts: [5, 10, 15, 20],
     response_window: 2000,
     practice_trials: 10,
-    test_trials: 10, //Aizvietot ar 50
+    test_trials: 30,
     target_probability: 0.5
   })
 
   taskSwitchingExperiment(timeline, jsPsych, {
     reaction_buttons: ["b", "n"],
     practice_trials: 10,
-    test_trials: 10, //Aizvietot ar 50
+    test_trials: 50,
     target_probability: 0.5,
     response_window: 5000,
   })
