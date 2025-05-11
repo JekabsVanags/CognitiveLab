@@ -18,6 +18,7 @@ import { visualSearchTest } from "./experiment_modules.js/visualSearching";
 import { taskSwitchingExperiment } from "./experiment_modules.js/taskSwitching";
 import { subjectiveCertainty } from "./experiment_modules.js/subjectiveCertainty";
 import { databasePreparing, dataProcessing } from "./data";
+import saveDataFromJSON from "./data_from_JSON";
 
 /**
  * This function will be executed by jsPsych Builder and is expected to run the jsPsych experiment
@@ -51,6 +52,7 @@ const database_preparing = {
   on_load: function () {
     const experiments = ["nBack", "visualSearch", "taskSwitching", "subjectiveCertainty"]
     databasePreparing(experiments)
+    //saveDataFromJSON()
   }
 }
 

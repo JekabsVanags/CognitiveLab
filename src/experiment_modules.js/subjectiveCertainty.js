@@ -147,15 +147,14 @@ export function subjectiveCertainty(timeline, jsPsych) {
           responses.innerHTML = "";
 
           responseData.forEach((response) => {
-            if (response.task_id && tasks[response.task_id - 1]) { // Pievienota pārbaude
-              const question = tasks[response.task_id - 1].prompt;
-              const answer = response.response.Q0;
-              responses.innerHTML += `
+            const question = tasks[response.task_id - 1].prompt;
+            const answer = response.response.Q0;
+            responses.innerHTML += `
                 <i>${question}</i>
                 <p>${answer}</p>
               `;
-            }
           });
+
           responses.style = "text-align: center; margin-top: 60px;";
           responses.style.visibility = 'hidden';
           document.body.prepend(responses);
@@ -184,7 +183,7 @@ export function subjectiveCertainty(timeline, jsPsych) {
       },
       on_finish: function (data) {
         //Set data
-        data.taskId = task.id;
+        data.task_id = task.id;
 
         //Remove the appended elements
         const timeDisplay = document.getElementById("time-left");

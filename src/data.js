@@ -4,19 +4,19 @@ const SERVER_URL = "http://localhost:3001";
 //Function to process the experiment data
 export function dataProcessing(trial) {
 
-  if (trial.task === "email") {
+  if (trial.task == "email") {
     return processEmailTask(trial);
   }
-  else if (trial.task === "nBack" && trial.phase === "test") {
+  else if (trial.task == "nBack" && trial.phase == "test") {
     return processNBackTask(trial);
   }
-  else if (trial.task === "visualSearch" && trial.phase === "test") {
+  else if (trial.task == "visualSearch" && trial.phase == "test") {
     return processVisualSearchTask(trial);
   }
-  else if (trial.task === "taskSwitching" && trial.phase === "test") {
+  else if (trial.task == "taskSwitching" && trial.phase == "test") {
     return processTaskSwitchingTask(trial);
   }
-  else if (trial.task === "subjectiveCertainty") {
+  else if (trial.task == "subjectiveCertainty") {
     return processSubjectiveCertaintyTask(trial);
   }
   else {
@@ -126,7 +126,7 @@ function processLLMUsageQuestion(trial) {
     task: "subjectiveCertaintyLLMUsageLevel",
     email: trial.email,
     response: trial.response.Q0 ?? null,
-    task_id: trial.taskId,
+    task_id: trial.task_id,
     has_been_to_america: trial.hasBeenToAmerica ?? null,
     has_planned_a_trip: trial.hasPlannedATrip ?? null,
     accessed_previous_answers: trial.accessedPreviousAnswer ?? false,
@@ -156,7 +156,7 @@ function processAnswerQuestion(trial) {
 }
 
 // Function to save the responses to database
-function saveToDatabase(data) {
+export function saveToDatabase(data) {
   fetch(`${SERVER_URL}/api/experiment/insert_data`, {
     method: 'POST',
     headers: {
