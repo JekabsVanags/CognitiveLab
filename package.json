@@ -4,6 +4,7 @@
     "jspsych": "jspsych -e experiment",
     "start": "concurrently \"npm run jspsych -- run\" \"node ./backend_src/server.js\"",
     "start-be": "node ./backend_src/server.js",
+    "start-prebuilt": "concurrently \"npx http-server ./packaged/experiment_0.1.0/experiment -p 3000\" \"node ./backend_src/server.js\"",
     "build": "npm run jspsych -- build",
     "jatos": "npm run jspsych -- build --jatos"
   },
