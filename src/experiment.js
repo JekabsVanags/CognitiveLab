@@ -50,7 +50,7 @@ const database_preparing = {
   type: HtmlKeyboardResponsePlugin,
   stimulus: "Sagatavo DB eksperimenta datu ievākšanai",
   on_load: function () {
-    const experiments = ["nBack", "visualSearch", "taskSwitching", "subjectiveCertainty"]
+    const experiments = ["nBack", "visualSearch", "taskSwitching"]
     databasePreparing(experiments)
     //saveDataFromJSON()
   }
@@ -114,8 +114,6 @@ export async function run({ assetPaths, input = {}, environment, title, version 
     target_probability: 0.5,
     response_window: 5000,
   })
-
-  subjectiveCertainty(timeline, jsPsych)
 
   //===Proceses the data===//
   timeline.push(data_processing(jsPsych));
