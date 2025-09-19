@@ -3,7 +3,7 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 import SurveyHtmlFormPlugin from "@jspsych/plugin-survey-html-form";
 
 /**
- * Adds intro section to the jsPsych experiment timeline, collects the emails
+ * Adds intro section to the jsPsych experiment timeline, collects the ids
  *
  * @param {Array} timeline - The experiment timeline array to which the n-Back test will be added.
  * @param {Object} jsPsych - The jsPsych instance used to build the experiment.
@@ -21,7 +21,7 @@ export function introScreens(timeline, jsPsych) {
       `,
   }
 
-  //===Experiment screen where we get the internal identifier (email)===//
+  //===Experiment screen where we get the internal identifier (id)===//
   const idScreen = {
     type: SurveyHtmlFormPlugin,
     html: `
@@ -29,11 +29,11 @@ export function introScreens(timeline, jsPsych) {
       <label>Epasts: </label><input name="answer" type="text" required> <br> <br>
       `,
     data: {
-      task: "email"
+      task: "id"
     },
     on_finish: function (data) {
       //Global variable to attach internal identifier to all responses
-      jsPsych.data.addProperties({ "email": data.response.answer })
+      jsPsych.data.addProperties({ "id": data.response.answer })
     }
   }
 

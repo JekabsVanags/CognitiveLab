@@ -188,7 +188,7 @@ function generateTrials(stimuli, isPractice, settings, jsPsych) {
       data: {
         task: "taskSwitching",
         taskType: stim.taskType ? "form" : "fill",
-        repeatTask: jsPsych.data.get().last(1).values()[0]?.taskType === stim.taskType ?? false,
+        repeatTask: (jsPsych.data.get().last(1).values()[0]?.taskType === stim.taskType) || false,
         targetReaction: stim.targetReaction ? settings.reaction_buttons[0] : settings.reaction_buttons[1],
         trialIndex: i,
         phase: isPractice ? "practice" : "test",

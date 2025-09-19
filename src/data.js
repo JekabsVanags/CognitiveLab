@@ -1,11 +1,34 @@
+import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
+
 // Server configuration
 const SERVER_URL = "http://localhost:3001";
+
+//===Experiment step that processes the data of experiments till then===//
+export function dataSavingStep(jsPsych, experiment = null) {
+  return (
+    {
+      type: HtmlKeyboardResponsePlugin,
+      choices: "NO_KEYS",
+      trial_duration: 1000,
+      stimulus: "Dati tiek apstrādāti un saglabāti",
+      on_load: function () {
+
+        //Filter out the significant data (ones that are tied to a task)
+        const filtered = jsPsych.data.get().trials.filter((d) => d.task != null && experiment ? d.task == experiment : true)
+
+        //For each record process it (save to DB) and show in console as JSON
+        const data = filtered.map((d) => dataProcessing(d)).filter((item) => item !== null)
+        console.log(data)
+      }
+    }
+  )
+}
 
 //Function to process the experiment data
 export function dataProcessing(trial) {
 
-  if (trial.task == "email") {
-    return processEmailTask(trial);
+  if (trial.task == "id") {
+    return processidTask(trial);
   }
   else if (trial.task == "nBack" && trial.phase == "test") {
     return processNBackTask(trial);
@@ -24,11 +47,11 @@ export function dataProcessing(trial) {
   }
 }
 
-//===Process email collection data===//
-function processEmailTask(trial) {
+//===Process id collection data===//
+function processidTask(trial) {
   const data = {
     task: "participants",
-    email: trial.response.answer ?? "",
+    id: trial.response.answer ?? "",
     trial_index: 0
   };
 
@@ -40,7 +63,7 @@ function processEmailTask(trial) {
 function processNBackTask(trial) {
   const data = {
     task: "nBack",
-    email: trial.email,
+    id: trial.id,
     is_target: trial.isTarget ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
@@ -56,7 +79,7 @@ function processNBackTask(trial) {
 function processVisualSearchTask(trial) {
   const data = {
     task: "visualSearch",
-    email: trial.email,
+    id: trial.id,
     is_target: trial.containsTarget ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
@@ -72,7 +95,7 @@ function processVisualSearchTask(trial) {
 function processTaskSwitchingTask(trial) {
   const data = {
     task: "taskSwitching",
-    email: trial.email,
+    id: trial.id,
     target_reaction: `'${trial.targetReaction}'` ?? null,
     task_type: `'${trial.taskType}'` ?? null,
     task_repeated: trial.repeatTask ?? null,
@@ -107,7 +130,7 @@ function processSubjectiveCertaintyTask(trial) {
 function processConfidenceQuestion(trial) {
   const data = {
     task: "subjectiveCertaintyConfidenceLevel",
-    email: trial.email,
+    id: trial.id,
     response: trial.response.Q0,
     task_id: trial.task_id,
     has_been_to_america: trial.hasBeenToAmerica ?? null,
@@ -124,7 +147,7 @@ function processConfidenceQuestion(trial) {
 function processLLMUsageQuestion(trial) {
   const data = {
     task: "subjectiveCertaintyLLMUsageLevel",
-    email: trial.email,
+    id: trial.id,
     response: trial.response.Q0 ?? null,
     task_id: trial.task_id,
     has_been_to_america: trial.hasBeenToAmerica ?? null,
@@ -141,7 +164,7 @@ function processLLMUsageQuestion(trial) {
 function processAnswerQuestion(trial) {
   const data = {
     task: "subjectiveCertaintyAnswer",
-    email: trial.email,
+    id: trial.id,
     response: `'${trial.response.Q0}'`,
     task_id: trial.task_id,
     response_time: trial.rt ?? null,
@@ -169,10 +192,10 @@ export function saveToDatabase(data) {
 //Function that prepares database for the experiments
 //(Creates databases if they dont exist, non-destructive)
 export function databasePreparing(experiments) {
-
+  console.log("PRAPARE")
   // Common fields for all tables
   const metaData = [
-    { name: "email", type: "varchar(255)" },
+    { name: "id", type: "varchar(255)" },
     { name: " trial_index", type: "int" }
   ];
 
