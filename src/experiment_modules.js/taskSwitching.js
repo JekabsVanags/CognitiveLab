@@ -11,9 +11,10 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
  * @param {number} settings.test_trials - The number of test trials in the main block.
  * @param {number} settings.target_probability - The probability (0–1) that a given trial will be a target.
  * @param {number} settings.response_window - how long till the experiment is considered timed out.
+ * @param {boolean} [showStats=false] - Whether to show statistics on the completion screen.
  */
 
-export function taskSwitchingExperiment(timeline, jsPsych, settings) {
+export function taskSwitchingExperiment(timeline, jsPsych, settings,showStats=false) {
 
   //===Experiment step that explains the task===//
   const explanationScreen = {
@@ -89,10 +90,33 @@ export function taskSwitchingExperiment(timeline, jsPsych, settings) {
   //===Experiment step that finishes the visualSearching experiment===//
   const completionScreen = {
     type: HtmlKeyboardResponsePlugin,
-    stimulus: `
+    stimulus: function() {
+      if (!showStats) {
+        return `
+          <h2>Tests pabeigts!</h2>
+          <i>Spied jebkuru taustiņu, lai turpinātu.</i>
+        `;
+      }
+      // Get all test trial data
+      const testData = jsPsych.data.get().filter({task: 'taskSwitching', phase: 'test'});
+      const total = testData.count();
+      const correct = testData.filter({correct: true}).count();
+      const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+      // Average reaction time for correct responses
+      const correctRTs = testData.select('rt').values
+      const avgRT = correctRTs.length > 0
+        ? Math.round(correctRTs.reduce((a, b) => a + b, 0) / correctRTs.length)
+        : '—';
+
+      return `
         <h2>Tests pabeigts!</h2>
+        <p>Tu atbildēji pareizi uz <b>${correct}</b> no <b>${total}</b> mēģinājumiem.</p>
+        <p>Tava precizitāte: <b>${accuracy}%</b></p>
+        <p>Vidējais reakcijas laiks: <b>${avgRT} ms</b></p>
         <i>Spied jebkuru taustiņu, lai turpinātu.</i>
-        `,
+      `;
+    },
     on_finish: function () {
       document.body.style.backgroundColor = "white";
       document.body.style.color = "black";
@@ -211,7 +235,15 @@ function generateTrials(stimuli, isPractice, settings, jsPsych) {
     //===Experiment step with error feedback===//
     const errorFeedback = {
       type: HtmlKeyboardResponsePlugin,
-      stimulus: '<div style="font-size: 24px; color: red; text-align: center;">Nepareiza atbilde!</div>',
+      stimulus: `
+        <p>Brīžos, kad simbols atrodas augšējā kvadrātā, ir jāreaģē uz tā <b>formu</b>.</p>
+        <p>Ja redzi <b>◇</b>, spied <b>${settings.reaction_buttons[0]}</b></p>
+        <p>Ja redzi <b>□</b>, spied <b>${settings.reaction_buttons[1]}</b></p>
+        <hr>
+        <p>Brīžos, kad simbols atrodas apakšējā kvadrātā, ir jāreaģē uz tā <b>pildījumu</b>.</p>
+        <p>Ja redzi ••, spied <b>${settings.reaction_buttons[0]}</b></p>
+        <p>Ja redzi •••, spied <b>${settings.reaction_buttons[1]}</b></p>
+      `,
       choices: "NO_KEYS",
       trial_duration: 3000,
     };
