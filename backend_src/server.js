@@ -5,7 +5,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'http://jspsych:3000', // your jsPsych frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // if sending cookies/auth headers
+}));
+
 app.use(bodyParser.json());
 
 const connection = mysql.createConnection({
@@ -47,7 +52,7 @@ app.post('/api/prepare_table', (req, res) => {
 });
 
 app.post('/api/experiment/insert_data', (req, res) => {
-  const { task, email, ...data } = req.body;
+  const { task, id, ...data } = req.body;
 
   if (!req.body) {
     return res.status(400).json({ error: 'Missing data' });
@@ -57,7 +62,7 @@ app.post('/api/experiment/insert_data', (req, res) => {
   const values = Object.values(data);
 
 
-  const sql = `INSERT INTO ${task} (email${keys.length > 0 ? ',' : ''} ${keys.join(", ")}) VALUES ('${email}'${values.length > 0 ? ',' : ''} ${values.join(", ")});`;
+  const sql = `INSERT INTO ${task} (id${keys.length > 0 ? ',' : ''} ${keys.join(", ")}) VALUES ('${id}'${values.length > 0 ? ',' : ''} ${values.join(", ")});`;
 
   connection.query(sql, [], (error, results) => {
     if (error) {

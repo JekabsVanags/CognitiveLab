@@ -14,9 +14,10 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response"
  * @param {number} settings.stimulus_duration - Duration (in milliseconds) that each stimulus is shown.
  * @param {number} settings.response_window - Time (in milliseconds) the participant has to respond after each stimulus.
  * @param {number} settings.target_probability - Probability (0–1) that a given trial will be a target (i.e., matches the one n-back).
+ * @param {boolean} [showStats=false] - Whether to show statistics on the completion screen.
  */
 
-export function nBackTest(timeline, jsPsych, settings) {
+export function nBackTest(timeline, jsPsych, settings, showStats = false) {
 
   //===Experiment step that explains the task===//
   const explenationScreen1 = {
@@ -78,11 +79,34 @@ export function nBackTest(timeline, jsPsych, settings) {
   //===Experiment step that finishes the nBack experiment===//
   const completionScreen = {
     type: HtmlKeyboardResponsePlugin,
-    stimulus: `
-        <h2>Operatīvās atmiņas tests pabeigts!</h2>
+    stimulus: function() {
+      if (!showStats) {
+        return `
+          <h2>Tests pabeigts!</h2>
+          <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
+        `;
+      }
+      // Get all test trial data
+      const testData = jsPsych.data.get().filter({task: 'nBack', phase: 'test'});
+      const total = testData.count();
+      const correct = testData.filter({correct: true}).count();
+      const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+        // Calculate average reaction time for correct responses
+      const correctRTs = testData.select('rt').values;
+      const avgRT = correctRTs.length > 0
+        ? Math.round(correctRTs.reduce((a, b) => a + b, 0) / correctRTs.length)
+        : '—';
+
+      return `
+        <h2>Tests pabeigts!</h2>
+        <p>Tu atbildēji pareizi uz <b>${correct}</b> no <b>${total}</b> mēģinājumiem.</p>
+        <p>Tava precizitāte: <b>${accuracy}%</b></p>
+        <p>Vidējais reakcijas laiks: <b>${avgRT} ms</b></p>
         <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
-      `
-  }
+      `;
+    }
+  };
 
   // Generate practice sequences
   const practiceSequence = generateSequence(
