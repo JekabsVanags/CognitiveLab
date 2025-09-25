@@ -19,9 +19,10 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
  * @param {number} settings.practice_trials - The number of practice trials before the main test block.
  * @param {number} settings.test_trials - The number of test trials in the main block.
  * @param {number} settings.target_probability - The probability (0–1) that a given trial will be a target.
+ * @param {boolean} [showStats=false] - Whether to show statistics on the completion screen.
  */
 
-export function visualSearchTest(timeline, jsPsych, settings) {
+export function visualSearchTest(timeline, jsPsych, settings, showStats = false) {
 
   //===Experiment step that explains the task===//
   const explenationScreen1 = {
@@ -69,13 +70,35 @@ export function visualSearchTest(timeline, jsPsych, settings) {
 
   //===Experiment step that finishes the visualSearching experiment===//
   const completionScreen = {
-    type: HtmlKeyboardResponsePlugin,
-    stimulus: `
-        <h2>Vizuālās meklēšanas tests pabeigts!</h2>
+  type: HtmlKeyboardResponsePlugin,
+  stimulus: function() {
+    if (!showStats) {
+      return `
+        <h2>Tests pabeigts!</h2>
         <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
-      `
-  };
+      `;
+    }
+    // Get all test trial data
+    const testData = jsPsych.data.get().filter({task: 'visualSearch', phase: 'test'});
+    const total = testData.count();
+    const correct = testData.filter({correct: true}).count();
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
+    // Average reaction time for correct responses
+    const correctRTs = testData.filter({correct: true}).select('rt').values.filter(rt => rt !== null);
+    const avgRT = correctRTs.length > 0
+      ? Math.round(correctRTs.reduce((a, b) => a + b, 0) / correctRTs.length)
+      : '—';
+
+    return `
+      <h2>Tests pabeigts!</h2>
+      <p>Tu atbildēji pareizi uz <b>${correct}</b> no <b>${total}</b> mēģinājumiem.</p>
+      <p>Tava precizitāte: <b>${accuracy}%</b></p>
+      <p>Vidējais reakcijas laiks (pareizām atbildēm): <b>${avgRT} ms</b></p>
+      <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
+    `;
+  }
+};
   //Generate the stimuli (images) for the experiment
   const practiceStimuli = generateStimuli(settings.practice_trials, jsPsych.randomization, settings)
   const testStimuli = generateStimuli(settings.test_trials, jsPsych.randomization, settings)

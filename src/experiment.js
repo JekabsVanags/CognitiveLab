@@ -65,6 +65,7 @@ export async function run({ assetPaths, input = {}, environment, title, version 
   //===Place the experiment functions here===//
   switch (experimentName) {
     case "nBack":
+      geneveEmotionWheel(timeline, jsPsych);
       nBackTest(timeline, jsPsych, {
         n_back: 2,
         stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
@@ -73,9 +74,10 @@ export async function run({ assetPaths, input = {}, environment, title, version 
         stimulus_duration: 500,
         response_window: 3000,
         target_probability: 0.3
-      })
+      }, true)
       break;
     case "visualSearch":
+      geneveEmotionWheel(timeline, jsPsych);
       visualSearchTest(timeline, jsPsych, {
         symbol: "T",
         color: "red",
@@ -89,16 +91,17 @@ export async function run({ assetPaths, input = {}, environment, title, version 
         practice_trials: 2,
         test_trials: 2,
         target_probability: 0.5
-      })
+      }, true)
       break;
     case "taskSwitching":
+      geneveEmotionWheel(timeline, jsPsych);
       taskSwitchingExperiment(timeline, jsPsych, {
         reaction_buttons: ["b", "n"],
         practice_trials: 2,
         test_trials: 2,
         target_probability: 0.5,
         response_window: 5000,
-      })
+      }, true)
       break;
     case "emotionRing":
       geneveEmotionWheel(timeline, jsPsych)
