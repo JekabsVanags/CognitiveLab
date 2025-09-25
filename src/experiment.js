@@ -69,8 +69,8 @@ export async function run({ assetPaths, input = {}, environment, title, version 
       nBackTest(timeline, jsPsych, {
         n_back: 2,
         stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
-        practice_trials: 2,
-        test_trials: 2,
+        practice_trials: 10,
+        test_trials: 30,
         stimulus_duration: 500,
         response_window: 3000,
         target_probability: 0.3
@@ -88,8 +88,8 @@ export async function run({ assetPaths, input = {}, environment, title, version 
         grid_size: 5,
         element_counts: [5, 10, 15, 20],
         response_window: 2000,
-        practice_trials: 2,
-        test_trials: 2,
+        practice_trials: 10,
+        test_trials: 30,
         target_probability: 0.5
       }, true)
       break;
@@ -97,8 +97,8 @@ export async function run({ assetPaths, input = {}, environment, title, version 
       geneveEmotionWheel(timeline, jsPsych);
       taskSwitchingExperiment(timeline, jsPsych, {
         reaction_buttons: ["b", "n"],
-        practice_trials: 2,
-        test_trials: 2,
+        practice_trials: 10,
+        test_trials: 30,
         target_probability: 0.5,
         response_window: 5000,
       }, true)

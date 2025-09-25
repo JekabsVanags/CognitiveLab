@@ -1,17 +1,20 @@
-FROM node:20-bullseye
+# Use Node.js LTS version as the base image
+FROM node:20-alpine
 
-# Install MySQL server
-RUN apt-get update && apt-get install -y mysql-server mysql-client
-
+# Set working directory
 WORKDIR /app
+
+# Copy package.json and package-lock.json
 COPY package*.json ./
-RUN npm install --production
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the project
 COPY . .
 
-# Copy DB init script
-COPY init-db.sh /init-db.sh
-RUN chmod +x /init-db.sh
+# Expose port (jsPsych server port)
+EXPOSE 3000
 
-EXPOSE 3000 3306
-
-CMD ["sh", "/init-db.sh"]
+# Default command (can be overridden in docker-compose)
+CMD ["npm", "start"]

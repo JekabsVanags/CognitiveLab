@@ -1,7 +1,7 @@
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 
 // Server configuration
-const SERVER_URL = "http://localhost:3001";
+const SERVER_URL = "http://jspsych:3001";
 
 //===Experiment step that processes the data of experiments till then===//
 export function dataSavingStep(jsPsych, experiment = null) {

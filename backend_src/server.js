@@ -6,8 +6,11 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors({
-  origin: '*', // or your frontend origin URL if you want stricter control
+  origin: 'http://jspsych:3000', // your jsPsych frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // if sending cookies/auth headers
 }));
+
 app.use(bodyParser.json());
 
 const connection = mysql.createConnection({
