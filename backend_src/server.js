@@ -6,7 +6,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors({
-  origin: 'http://jspsych:3000', // your jsPsych frontend
+  origin: 'http://localhost:3000', // your jsPsych frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // if sending cookies/auth headers
 }));
@@ -73,6 +73,7 @@ app.post('/api/experiment/insert_data', (req, res) => {
   });
 });
 
-app.listen(3001, () => {
-  console.log('Server listening on port 3001');
+app.listen(3001, "0.0.0.0", () => {
+  console.log("API running on port 3001");
 });
+

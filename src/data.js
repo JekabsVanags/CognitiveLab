@@ -1,7 +1,7 @@
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 
 // Server configuration
-const SERVER_URL = "http://jspsych:3001";
+const SERVER_URL = "http://localhost:3001";
 
 //===Experiment step that processes the data of experiments till then===//
 export function dataSavingStep(jsPsych, experiment = null) {
@@ -51,7 +51,7 @@ export function dataProcessing(trial) {
 function processidTask(trial) {
   const data = {
     task: "participants",
-    id: trial.response.answer ?? "",
+    user_id: trial.response.answer ?? "",
     trial_index: 0
   };
 
@@ -63,7 +63,7 @@ function processidTask(trial) {
 function processNBackTask(trial) {
   const data = {
     task: "nBack",
-    id: trial.id,
+    user_id: trial.user_id,
     is_target: trial.isTarget ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
@@ -79,7 +79,7 @@ function processNBackTask(trial) {
 function processVisualSearchTask(trial) {
   const data = {
     task: "visualSearch",
-    id: trial.id,
+    user_id: trial.user_id,
     is_target: trial.containsTarget ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
@@ -95,7 +95,7 @@ function processVisualSearchTask(trial) {
 function processTaskSwitchingTask(trial) {
   const data = {
     task: "taskSwitching",
-    id: trial.id,
+    user_id: trial.user_id,
     target_reaction: `'${trial.targetReaction}'` ?? null,
     task_type: `'${trial.taskType}'` ?? null,
     task_repeated: trial.repeatTask ?? null,
@@ -130,7 +130,7 @@ function processSubjectiveCertaintyTask(trial) {
 function processConfidenceQuestion(trial) {
   const data = {
     task: "subjectiveCertaintyConfidenceLevel",
-    id: trial.id,
+    user_id: trial.user_id,
     response: trial.response.Q0,
     task_id: trial.task_id,
     has_been_to_america: trial.hasBeenToAmerica ?? null,
@@ -164,7 +164,7 @@ function processLLMUsageQuestion(trial) {
 function processAnswerQuestion(trial) {
   const data = {
     task: "subjectiveCertaintyAnswer",
-    id: trial.id,
+    user_id: trial.user_id,
     response: `'${trial.response.Q0}'`,
     task_id: trial.task_id,
     response_time: trial.rt ?? null,
@@ -195,7 +195,7 @@ export function databasePreparing(experiments) {
   console.log("PRAPARE")
   // Common fields for all tables
   const metaData = [
-    { name: "id", type: "varchar(255)" },
+    { name: "user_id", type: "varchar(255)" },
     { name: " trial_index", type: "int" }
   ];
 
