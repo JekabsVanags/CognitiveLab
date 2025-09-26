@@ -9,6 +9,7 @@
 // You can import stylesheets (.scss or .css).
 import "../styles/main.scss";
 
+import FullscreenPlugin from "@jspsych/plugin-fullscreen";
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 import PreloadPlugin from "@jspsych/plugin-preload";
 import { initJsPsych } from "jspsych";
@@ -51,7 +52,6 @@ export async function run({ assetPaths, input = {}, environment, title, version 
   const timeline = []
 
   const experimentName = jsPsych.data.getURLVariable("experiment")
-  console.log(experimentName)
   // Preload
   timeline.push({
     type: PreloadPlugin,
@@ -65,7 +65,12 @@ export async function run({ assetPaths, input = {}, environment, title, version 
   //===Place the experiment functions here===//
   switch (experimentName) {
     case "nBack":
-      geneveEmotionWheel(timeline, jsPsych);
+      timeline.push({
+        type: FullscreenPlugin,
+        fullscreen_mode: true,
+        message: `<p style="font-size: 30px;">Lūdzu, spied pogu, lai sāktu eksperimentu!</p>`,
+        button_label: "Sākt!"
+      });
       nBackTest(timeline, jsPsych, {
         n_back: 2,
         stimuli: ["A", "B", "C", "D", "E", "H", "I", "K", "L", "M", "O", "P", "R", "S", "T"],
@@ -77,7 +82,12 @@ export async function run({ assetPaths, input = {}, environment, title, version 
       }, true)
       break;
     case "visualSearch":
-      geneveEmotionWheel(timeline, jsPsych);
+      timeline.push({
+        type: FullscreenPlugin,
+        fullscreen_mode: true,
+        message: `<p style="font-size: 30px;">Lūdzu, spied pogu, lai sāktu eksperimentu!</p>`,
+        button_label: "Sākt!"
+      });
       visualSearchTest(timeline, jsPsych, {
         symbol: "T",
         color: "red",
@@ -94,7 +104,12 @@ export async function run({ assetPaths, input = {}, environment, title, version 
       }, true)
       break;
     case "taskSwitching":
-      geneveEmotionWheel(timeline, jsPsych);
+      timeline.push({
+        type: FullscreenPlugin,
+        fullscreen_mode: true,
+        message: `<p style="font-size: 30px;">Lūdzu, spied pogu, lai sāktu eksperimentu!</p>`,
+        button_label: "Sākt!"
+      });
       taskSwitchingExperiment(timeline, jsPsych, {
         reaction_buttons: ["b", "n"],
         practice_trials: 10,
@@ -103,16 +118,50 @@ export async function run({ assetPaths, input = {}, environment, title, version 
         response_window: 5000,
       }, true)
       break;
-    case "emotionRing":
+    case "emotionWheel":
+      timeline.push({
+        type: FullscreenPlugin,
+        fullscreen_mode: true,
+        message: `<p style="font-size: 30px;">Lūdzu, spied pogu, lai sāktu eksperimentu!</p>`,
+        button_label: "Sākt!"
+      });
       geneveEmotionWheel(timeline, jsPsych)
       break;
     default:
-      full_workflow(timeline, jsPsych)
+      //full_workflow(timeline, jsPsych)
+      timeline.push({
+        type: HtmlKeyboardResponsePlugin,
+        stimulus: `
+          <p style="font-size: 30px;">Lūdzu, izvēlies eksperimentu!</p>
+          <div style="margin-top:20px;">
+            <button style="padding: 10px 20px 10px 20px; text-align: center; border-radius: 8px; background: #eee;" onclick="window.location.href='?experiment=nBack'">Atmiņa</button>
+            <button style="padding: 10px 20px 10px 20px; text-align: center; border-radius: 8px; background: #eee;" onclick="window.location.href='?experiment=taskSwitching'">Daudzuzdevumu veikšana</button>
+            <button style="padding: 10px 20px 10px 20px; text-align: center; border-radius: 8px; background: #eee;" onclick="window.location.href='?experiment=visualSearch'">Vizuālā meklēšana</button>
+          </div>
+        `,
+        choices: "NO_KEYS"
+      });
       break;
   }
+
+  timeline.push({
+  type: FullscreenPlugin,
+  fullscreen_mode: false
+});
+
+ timeline.push({
+  type: HtmlKeyboardResponsePlugin,
+  stimulus: `
+    <p style="font-size: 30px;">Paldies par dalību!</p>
+    <div style="margin-top:20px; display: flex; flex-direction: column; gap: 10px; width: 200px; margin-left: auto; margin-right: auto;">
+      <button style="padding: 10px 20px; text-align: center; border-radius: 8px; background: #ddd; font-weight: bold;" onclick="window.location.href='/'">⬅︎ Atpakaļ uz sākumu</button>
+    </div>
+  `,
+  choices: "NO_KEYS"
+});
 
   //===Launches the experiment===//
   await jsPsych.run(timeline);
 
-  return jsPsych;
+  //return jsPsych;
 }
