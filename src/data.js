@@ -15,9 +15,9 @@ export function dataSavingStep(jsPsych, experiment = null) {
 
         //Filter out the significant data (ones that are tied to a task)
         const filtered = jsPsych.data.get().trials.filter((d) => d.task != null && experiment ? d.task == experiment : true)
-
+        console.log(filtered)
         //For each record process it (save to DB) and show in console as JSON
-        const data = filtered.map((d) => dataProcessing(d)).filter((item) => item !== null)
+        const data = filtered.map((d) => dataProcessing(d)).filter((item) => item !== null || item)
         console.log(data)
       }
     }
@@ -27,7 +27,7 @@ export function dataSavingStep(jsPsych, experiment = null) {
 //Function to process the experiment data
 export function dataProcessing(trial) {
 
-  if (trial.task == "id") {
+  if (trial.task == "participants") {
     return processidTask(trial);
   }
   else if (trial.task == "nBack" && trial.phase == "test") {
@@ -42,6 +42,9 @@ export function dataProcessing(trial) {
   else if (trial.task == "subjectiveCertainty") {
     return processSubjectiveCertaintyTask(trial);
   }
+  else if (trial.task == "geneveEmotionWheel") {
+    return processEmotionWheelTrial(trial);
+  }
   else {
     return null;
   }
@@ -51,13 +54,31 @@ export function dataProcessing(trial) {
 function processidTask(trial) {
   const data = {
     task: "participants",
-    user_id: trial.response.answer ?? "",
+    user_id: `'${trial.response.answer}'` ?? "",
     trial_index: 0
   };
 
   saveToDatabase(data);
   return data;
 }
+
+//===Process Geneve emotion wheel task data===//
+function processEmotionWheelTrial(trial) {
+  const emotions = JSON.parse(trial.response);
+
+  const data = emotions.map((item) => ({
+    task: "geneveEmotionWheel",
+    user_id: trial.user_id,
+    emotion: `'${item.emotion}'`,
+    intensity: item.intensity,
+    trial_index: trial.trial_index
+  }));
+
+  data.forEach(entry => saveToDatabase(entry));
+
+  return data;
+}
+
 
 //===Process n-back task data===//
 function processNBackTask(trial) {
@@ -231,6 +252,14 @@ export function databasePreparing(experiments) {
         { name: "task_repeated", type: "bool" },
         { name: "is_correct", type: "bool" },
         { name: "reaction_time", type: "bigint" }
+      ]
+    },
+    {
+      tableName: "geneveEmotionWheel",
+      tableColumns: [
+        { name: "emotion", type: "varchar(255)" },
+        { name: "intensity", type: "int" },
+
       ]
     },
     {

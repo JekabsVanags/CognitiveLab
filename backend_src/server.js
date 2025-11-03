@@ -62,7 +62,7 @@ app.post('/api/experiment/insert_data', (req, res) => {
   const values = Object.values(data);
 
 
-  const sql = `INSERT INTO ${task} (id${keys.length > 0 ? ',' : ''} ${keys.join(", ")}) VALUES ('${id}'${values.length > 0 ? ',' : ''} ${values.join(", ")});`;
+  const sql = `INSERT INTO ${task} (${id ? 'id,' : ''} ${keys.join(", ")}) VALUES ('${id ? `${id},` : ""}' ${values.join(", ")});`;
 
   connection.query(sql, [], (error, results) => {
     if (error) {

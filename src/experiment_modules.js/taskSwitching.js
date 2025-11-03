@@ -14,7 +14,7 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
  * @param {boolean} [showStats=false] - Whether to show statistics on the completion screen.
  */
 
-export function taskSwitchingExperiment(timeline, jsPsych, settings,showStats=false) {
+export function taskSwitchingExperiment(timeline, jsPsych, settings, showStats = false) {
 
   //===Experiment step that explains the task===//
   const explanationScreen = {
@@ -90,7 +90,7 @@ export function taskSwitchingExperiment(timeline, jsPsych, settings,showStats=fa
   //===Experiment step that finishes the visualSearching experiment===//
   const completionScreen = {
     type: HtmlKeyboardResponsePlugin,
-    stimulus: function() {
+    stimulus: function () {
       if (!showStats) {
         return `
           <h2>Tests pabeigts!</h2>
@@ -98,9 +98,9 @@ export function taskSwitchingExperiment(timeline, jsPsych, settings,showStats=fa
         `;
       }
       // Get all test trial data
-      const testData = jsPsych.data.get().filter({task: 'taskSwitching', phase: 'test'});
+      const testData = jsPsych.data.get().filter({ task: 'taskSwitching', phase: 'test' });
       const total = testData.count();
-      const correct = testData.filter({correct: true}).count();
+      const correct = testData.filter({ correct: true }).count();
       const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
       // Average reaction time for correct responses
@@ -212,13 +212,15 @@ function generateTrials(stimuli, isPractice, settings, jsPsych) {
       data: {
         task: "taskSwitching",
         taskType: stim.taskType ? "form" : "fill",
-        repeatTask: (jsPsych.data.get().last(1).values()[0]?.taskType === stim.taskType) || false,
         targetReaction: stim.targetReaction ? settings.reaction_buttons[0] : settings.reaction_buttons[1],
         trialIndex: i,
         phase: isPractice ? "practice" : "test",
       },
       on_finish: function (data) {
-        //If responded correctly
+        const allTaskTrials = jsPsych.data.get().filter({ task: "taskSwitching" }).values();
+        const lastTrial = allTaskTrials.length > 1 ? allTaskTrials[allTaskTrials.length - 2] : null;
+
+        data.repeatTask = lastTrial ? lastTrial.taskType === data.taskType : false;
         data.correct = (data.response === settings.reaction_buttons[0] && stim.targetReaction === true) ||
           (data.response === settings.reaction_buttons[1] && stim.targetReaction === false);
       }

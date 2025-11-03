@@ -156,7 +156,6 @@ export function geneveEmotionWheel(timeline, jsPsych) {
             emotion: currentSelectedEmotion,
             intensity: intensity
           });
-          console.log(emotionData);
 
           if (currentSelectedButton.id !== 'emotion-button-other') {
             // Disable the button and show rating
@@ -240,14 +239,11 @@ export function geneveEmotionWheel(timeline, jsPsych) {
         // Hide radio box and clear selection
         radioBox.style.display = "none";
         radioButtons.forEach(radio => radio.checked = false);
-
-        console.log("Reset: ", emotionData);
       });
     },
     on_finish: (data) => {
-      data.tral = "geneveEmotionWheel";
+      data.task = "geneveEmotionWheel";
       data.response = JSON.stringify(emotionData);
-      console.log(jsPsych.data.get());
     }
   });
 }
