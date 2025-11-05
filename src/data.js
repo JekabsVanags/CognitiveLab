@@ -54,7 +54,7 @@ export function dataProcessing(trial) {
 function processidTask(trial) {
   const data = {
     task: "participants",
-    user_id: `'${trial.response.answer}'` ?? "",
+    user_id: trial.response.answer ?? "",
     trial_index: 0
   };
 
@@ -69,7 +69,7 @@ function processEmotionWheelTrial(trial) {
   const data = emotions.map((item) => ({
     task: "geneveEmotionWheel",
     user_id: trial.user_id,
-    emotion: `'${item.emotion}'`,
+    emotion: item.emotion,
     intensity: item.intensity,
     trial_index: trial.trial_index
   }));
@@ -88,7 +88,7 @@ function processNBackTask(trial) {
     is_target: trial.isTarget ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
-    stim: `'${trial.letter}'` ?? 'null',
+    stim: trial.letter ?? 'null',
     trial_index: trial.trialIndex
   };
 
@@ -117,8 +117,8 @@ function processTaskSwitchingTask(trial) {
   const data = {
     task: "taskSwitching",
     user_id: trial.user_id,
-    target_reaction: `'${trial.targetReaction}'` ?? null,
-    task_type: `'${trial.taskType}'` ?? null,
+    target_reaction: trial.targetReaction ?? null,
+    task_type: trial.taskType ?? null,
     task_repeated: trial.repeatTask ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
@@ -186,7 +186,7 @@ function processAnswerQuestion(trial) {
   const data = {
     task: "subjectiveCertaintyAnswer",
     user_id: trial.user_id,
-    response: `'${trial.response.Q0}'`,
+    response: trial.response.Q0,
     task_id: trial.task_id,
     response_time: trial.rt ?? null,
     has_been_to_america: trial.hasBeenToAmerica ?? null,
@@ -213,7 +213,6 @@ export function saveToDatabase(data) {
 //Function that prepares database for the experiments
 //(Creates databases if they dont exist, non-destructive)
 export function databasePreparing(experiments) {
-  console.log("PRAPARE")
   // Common fields for all tables
   const metaData = [
     { name: "user_id", type: "varchar(255)" },

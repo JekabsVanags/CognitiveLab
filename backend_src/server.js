@@ -1,79 +1,102 @@
 require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-app.use(cors({
-  origin: 'http://localhost:3000', // your jsPsych frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, // if sending cookies/auth headers
-}));
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // jsPsych frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  })
+);
 
 app.use(bodyParser.json());
 
-const connection = mysql.createConnection({
+//Connection poll
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
+// Wait for DB to be ready before accepting requests
+async function ensureDatabaseReady(retries = 10, delay = 2000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await pool.query('SELECT 1');
+      console.log('Connected to MySQL');
+      return;
+    } catch (err) {
+      console.log(`Waiting for MySQL... (${i + 1}/${retries})`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
   }
-  console.log('Connected to MySQL');
-});
+  console.error('MySQL did not become ready in time');
+  process.exit(1);
+}
 
-app.post('/api/prepare_table', (req, res) => {
+//API routes
+app.post('/api/prepare_table', async (req, res) => {
   const { tableName, suffix, tableColumns } = req.body;
-  console.log(tableName, tableColumns);
 
   if (!tableName || !tableColumns) {
     return res.status(400).json({ error: 'Missing data' });
   }
 
   const columns = tableColumns.map((col) => `${col.name} ${col.type}`).join(', ');
+  const sql = `
+    CREATE TABLE IF NOT EXISTS \`${tableName}${suffix ?? ''}\` (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      ${columns},
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
 
-  const sql = `CREATE TABLE IF NOT EXISTS ${tableName}${suffix ?? ""} (id INT AUTO_INCREMENT PRIMARY KEY, ${columns}, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`;
-
-  console.log(sql)
-  connection.query(sql, [], (error, results) => {
-    if (error) {
-      console.error('Database error:', error);
-      return res.status(500).json({ error: 'Database error' });
-    }
+  try {
+    await pool.query(sql);
     res.json({ message: `Table ${tableName} created` });
-  });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
-app.post('/api/experiment/insert_data', (req, res) => {
+// Insert experiment data into a specified table
+app.post('/api/experiment/insert_data', async (req, res) => {
   const { task, id, ...data } = req.body;
 
-  if (!req.body) {
+  if (!task || Object.keys(data).length === 0) {
     return res.status(400).json({ error: 'Missing data' });
   }
 
   const keys = Object.keys(data);
   const values = Object.values(data);
 
+  // Safely construct query with placeholders
+  const placeholders = keys.map(() => '?').join(', ');
+  const sql = `INSERT INTO \`${task}\` (${keys.join(', ')}) VALUES (${placeholders})`;
 
-  const sql = `INSERT INTO ${task} (${id ? 'id,' : ''} ${keys.join(", ")}) VALUES ('${id ? `${id},` : ""}' ${values.join(", ")});`;
+  try {
+    await pool.query(sql, values);
+    res.json({ message: `Data inserted into ${task}` });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
 
-  connection.query(sql, [], (error, results) => {
-    if (error) {
-      console.error('Database error:', error);
-      return res.status(500).json({ error: 'Database error' });
-    }
-    res.json({ message: `Data registered` });
+//Start server after DB check
+ensureDatabaseReady().then(() => {
+  app.listen(3001, '0.0.0.0', () => {
+    console.log('API running on port 3001');
   });
 });
-
-app.listen(3001, "0.0.0.0", () => {
-  console.log("API running on port 3001");
-});
-

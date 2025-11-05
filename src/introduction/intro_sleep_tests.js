@@ -33,7 +33,7 @@ export function introScreensSleep(timeline, jsPsych) {
     },
     on_finish: function (data) {
       //Global variable to attach internal identifier to all responses
-      jsPsych.data.addProperties({ "user_id": `'${data.response.answer}'` })
+      jsPsych.data.addProperties({ "user_id": data.response.answer })
     }
   }
 
