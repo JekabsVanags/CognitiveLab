@@ -55,7 +55,8 @@ function processidTask(trial) {
   const data = {
     task: "participants",
     user_id: trial.response.answer ?? "",
-    trial_index: 0
+    trial_index: 0,
+    experiment_name: trial.experiment_name
   };
 
   saveToDatabase(data);
@@ -71,7 +72,8 @@ function processEmotionWheelTrial(trial) {
     user_id: trial.user_id,
     emotion: item.emotion,
     intensity: item.intensity,
-    trial_index: trial.trial_index
+    trial_index: trial.trial_index,
+    experiment_name: trial.experiment_name
   }));
 
   data.forEach(entry => saveToDatabase(entry));
@@ -89,7 +91,8 @@ function processNBackTask(trial) {
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
     stim: trial.letter ?? 'null',
-    trial_index: trial.trialIndex
+    trial_index: trial.trialIndex,
+    experiment_name: trial.experiment_name
   };
 
   saveToDatabase(data);
@@ -105,7 +108,8 @@ function processVisualSearchTask(trial) {
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
     stim_count: trial.numberOfItems ?? 0,
-    trial_index: trial.trialIndex
+    trial_index: trial.trialIndex,
+    experiment_name: trial.experiment_name
   };
 
   saveToDatabase(data);
@@ -122,7 +126,8 @@ function processTaskSwitchingTask(trial) {
     task_repeated: trial.repeatTask ?? null,
     is_correct: trial.correct ?? null,
     reaction_time: trial.rt ?? 0,
-    trial_index: trial.trialIndex
+    trial_index: trial.trialIndex,
+    experiment_name: trial.experiment_name
   };
 
   saveToDatabase(data);
@@ -157,7 +162,8 @@ function processConfidenceQuestion(trial) {
     has_been_to_america: trial.hasBeenToAmerica ?? null,
     has_planned_a_trip: trial.hasPlannedATrip ?? null,
     accessed_previous_answers: trial.accessedPreviousAnswer ?? false,
-    trial_index: trial.trialIndex
+    trial_index: trial.trialIndex,
+    experiment_name: trial.experiment_name
   };
 
   saveToDatabase(data);
@@ -174,7 +180,8 @@ function processLLMUsageQuestion(trial) {
     has_been_to_america: trial.hasBeenToAmerica ?? null,
     has_planned_a_trip: trial.hasPlannedATrip ?? null,
     accessed_previous_answers: trial.accessedPreviousAnswer ?? false,
-    trial_index: trial.trialIndex
+    trial_index: trial.trialIndex,
+    experiment_name: trial.experiment_name
   };
 
   saveToDatabase(data);
@@ -192,7 +199,8 @@ function processAnswerQuestion(trial) {
     has_been_to_america: trial.hasBeenToAmerica ?? null,
     has_planned_a_trip: trial.hasPlannedATrip ?? null,
     accessed_previous_answers: trial.accessedPreviousAnswer ?? false,
-    trial_index: trial.trialIndex
+    trial_index: trial.trialIndex,
+    experiment_name: trial.experiment_name
   };
 
   saveToDatabase(data);
@@ -216,7 +224,8 @@ export function databasePreparing(experiments) {
   // Common fields for all tables
   const metaData = [
     { name: "user_id", type: "varchar(255)" },
-    { name: " trial_index", type: "int" }
+    { name: "trial_index", type: "int" },
+    { name: "experiment_name", type: "varchar(255)" }
   ];
 
   // Table definitions with their specific columns

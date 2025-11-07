@@ -6,7 +6,7 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
  * @param {Array} timeline - The jsPsych timeline array.
  * @param {object} jsPsych - The jsPsych instance.
  */
-export function geneveEmotionWheel(timeline, jsPsych) {
+export default function geneveEmotionWheel(timeline, jsPsych) {
   let emotionData = []
 
   timeline.push({

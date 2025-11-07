@@ -17,7 +17,7 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response"
  * @param {boolean} [showStats=false] - Whether to show statistics on the completion screen.
  */
 
-export function nBackTest(timeline, jsPsych, settings, showStats = false) {
+export default function nBackTest(timeline, jsPsych, settings, showStats = false) {
 
   //===Experiment step that explains the task===//
   const explenationScreen1 = {
@@ -79,7 +79,7 @@ export function nBackTest(timeline, jsPsych, settings, showStats = false) {
   //===Experiment step that finishes the nBack experiment===//
   const completionScreen = {
     type: HtmlKeyboardResponsePlugin,
-    stimulus: function() {
+    stimulus: function () {
       if (!showStats) {
         return `
           <h2>Tests pabeigts!</h2>
@@ -87,12 +87,12 @@ export function nBackTest(timeline, jsPsych, settings, showStats = false) {
         `;
       }
       // Get all test trial data
-      const testData = jsPsych.data.get().filter({task: 'nBack', phase: 'test'});
+      const testData = jsPsych.data.get().filter({ task: 'nBack', phase: 'test' });
       const total = testData.count();
-      const correct = testData.filter({correct: true}).count();
+      const correct = testData.filter({ correct: true }).count();
       const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-        // Calculate average reaction time for correct responses
+      // Calculate average reaction time for correct responses
       const correctRTs = testData.select('rt').values;
       const avgRT = correctRTs.length > 0
         ? Math.round(correctRTs.reduce((a, b) => a + b, 0) / correctRTs.length)

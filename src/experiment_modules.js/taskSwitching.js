@@ -14,7 +14,7 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
  * @param {boolean} [showStats=false] - Whether to show statistics on the completion screen.
  */
 
-export function taskSwitchingExperiment(timeline, jsPsych, settings, showStats = false) {
+export default function taskSwitchingExperiment(timeline, jsPsych, settings, showStats = false) {
 
   //===Experiment step that explains the task===//
   const explanationScreen = {

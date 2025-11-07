@@ -48,27 +48,41 @@ async function ensureDatabaseReady(retries = 10, delay = 2000) {
 app.post('/api/prepare_table', async (req, res) => {
   const { tableName, suffix, tableColumns } = req.body;
 
-  if (!tableName || !tableColumns) {
-    return res.status(400).json({ error: 'Missing data' });
+  if (!tableName || !Array.isArray(tableColumns)) {
+    return res.status(400).json({ error: 'Missing or invalid data' });
   }
 
-  const columns = tableColumns.map((col) => `${col.name} ${col.type}`).join(', ');
-  const sql = `
-    CREATE TABLE IF NOT EXISTS \`${tableName}${suffix ?? ''}\` (
+  const fullTableName = `${tableName}${suffix ?? ''}`;
+  const columnsSQL = tableColumns.map((col) => `\`${col.name}\` ${col.type}`).join(', ');
+  const createSQL = `
+    CREATE TABLE IF NOT EXISTS \`${fullTableName}\` (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      ${columns},
+      ${columnsSQL},
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;
 
   try {
-    await pool.query(sql);
-    res.json({ message: `Table ${tableName} created` });
+    await pool.query(createSQL);
+
+    const [existingColumns] = await pool.query(`SHOW COLUMNS FROM \`${fullTableName}\``);
+    const existingColumnNames = existingColumns.map(c => c.Field);
+
+    for (const col of tableColumns) {
+      if (!existingColumnNames.includes(col.name)) {
+        const alterSQL = `ALTER TABLE \`${fullTableName}\` ADD COLUMN \`${col.name}\` ${col.type}`;
+        await pool.query(alterSQL);
+        console.log(`Column ${col.name} added to ${fullTableName}`);
+      }
+    }
+
+    res.json({ message: `Table ${fullTableName} prepared successfully` });
   } catch (error) {
     console.error('Database error:', error);
-    res.status(500).json({ error: 'Database error' });
+    res.status(500).json({ error: 'Database error', details: error.message });
   }
 });
+
 
 // Insert experiment data into a specified table
 app.post('/api/experiment/insert_data', async (req, res) => {
