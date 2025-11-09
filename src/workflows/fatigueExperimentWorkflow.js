@@ -1,10 +1,10 @@
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 import { dataSavingStep } from "../data";
 import { database_preparing } from "../experiment";
-import geneveEmotionWheel from "../experiment_modules.js/geneveEmotionWheel";
-import nBackTest from "../experiment_modules.js/nBack";
-import taskSwitchingExperiment from "../experiment_modules.js/taskSwitching";
-import visualSearchTest from "../experiment_modules.js/visualSearching";
+import geneveEmotionWheel from "../experiment_modules/geneveEmotionWheel";
+import nBackTest from "../experiment_modules/nBack";
+import taskSwitchingExperiment from "../experiment_modules/taskSwitching";
+import visualSearchTest from "../experiment_modules/visualSearching";
 import { introScreensSleep } from "../introduction/intro_sleep_tests";
 import FullscreenPlugin from "@jspsych/plugin-fullscreen";
 

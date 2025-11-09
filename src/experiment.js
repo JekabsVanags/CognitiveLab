@@ -15,6 +15,8 @@ import { initJsPsych } from "jspsych";
 import { databasePreparing } from "./data";
 import fatigueExperimentWorkflow from "./workflows/fatigueExperimentWorkflow";
 import agneBergaWorkflow from "./workflows/agneBergaWorkflow";
+import { subjectiveCertainty } from "./experiment_modules/subjectiveCertainty";
+import bfi10 from "./questionaire_modules/bfi10";
 
 /**
  * This function will be executed by jsPsych Builder and is expected to run the jsPsych experiment

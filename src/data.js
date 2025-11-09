@@ -45,6 +45,18 @@ export function dataProcessing(trial) {
   else if (trial.task == "geneveEmotionWheel") {
     return processEmotionWheelTrial(trial);
   }
+  else if (trial.task == "bfi10") {
+    return processBFI10Task(trial);
+  }
+  else if (trial.task == "ffs") {
+    return processSandardLikertTask(trial);
+  }
+  else if (trial.task == "ess") {
+    return processSandardLikertTask(trial);
+  }
+  else if (trial.task == "phq9") {
+    return processSandardLikertTask(trial);
+  }
   else {
     return null;
   }
@@ -63,6 +75,38 @@ function processidTask(trial) {
   return data;
 }
 
+//===Process BFI-10 personality questionaire===//
+function processBFI10Task(trial) {
+  const data = {
+    task: "likertSurvey",
+    trial_index: trial.trial_index,
+    questionaire: "bfi10",
+    user_id: trial.user_id,
+    experiment_name: trial.experiment_name,
+    question_id: trial.question_id,
+    question: trial.question + (trial.reversed ? " (Vērtības jau apgrieztas)" : ""),
+    response: trial.response
+  };
+
+  saveToDatabase(data);
+  return data;
+}
+
+function processSandardLikertTask(trial) {
+  const data = {
+    task: "likertSurvey",
+    trial_index: trial.trial_index,
+    questionaire: trial.task,
+    user_id: trial.user_id,
+    experiment_name: trial.experiment_name,
+    question_id: trial.question_id,
+    question: trial.question,
+    response: trial.response
+  };
+
+  saveToDatabase(data);
+  return data;
+}
 //===Process Geneve emotion wheel task data===//
 function processEmotionWheelTrial(trial) {
   const emotions = JSON.parse(trial.response);
@@ -302,6 +346,15 @@ export function databasePreparing(experiments) {
         { name: "has_been_to_america", type: "bool" },
         { name: "has_planned_a_trip", type: "bool" },
         { name: "accessed_previous_answers", type: "bigint" }
+      ]
+    },
+    {
+      tableName: "likertSurvey",
+      tableColumns: [
+        { name: "questionaire", type: "text" },
+        { name: "question_id", type: "int" },
+        { name: "question", type: "text" },
+        { name: "response", type: "int" },
       ]
     },
   ];

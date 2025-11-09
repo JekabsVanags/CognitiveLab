@@ -108,6 +108,21 @@ app.post('/api/experiment/insert_data', async (req, res) => {
   }
 });
 
+app.get('/api/experiment/last_id', async (req, res) => {
+  const sql = `SELECT id FROM participants ORDER BY id DESC LIMIT 1;`;
+
+  try {
+    const [rows] = await pool.query(sql); // ✅ destructure to get rows
+    const lastId = rows.length > 0 ? rows[0].id : 0;
+
+    res.json({ last_id: lastId });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+
 //Start server after DB check
 ensureDatabaseReady().then(() => {
   app.listen(3001, '0.0.0.0', () => {
