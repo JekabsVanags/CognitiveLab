@@ -60,14 +60,7 @@ export async function run({ assetPaths, input = {}, environment, title, version 
   const experiment = jsPsych.data.getURLVariable("experiment")
 
   //===Place the experiment functions here===//
-  switch (experiment) {
-    case "Berga":
-      agneBergaWorkflow(timeline, jsPsych)
-      break
-    default:
-      fatigueExperimentWorkflow(timeline, jsPsych)
-  }
-
+  agneBergaWorkflow(timeline, jsPsych)
 
   //===Launches the experiment===//
   await jsPsych.run(timeline);

@@ -5,7 +5,6 @@ export default function fss_questionaire(timeline, jsPsych) {
   const explanationScreen = {
     type: HtmlKeyboardResponsePlugin,
     stimulus: `
-       <b>Noguruma smaguma pakāpes aptauja</b>
        <p>Lūdzu, novērtējiet savu pašsajūtu pēdējās nedēļas laikā un cik lielā mērā Jūs piekrītat/nepiekrītat zemāk minētajam apgalvojumam</p>
        <p>(1 - pilnīgi nepiekrītu, 7 - pilnīgipiekrītu)</p>
        <i>Spied jebkuru taustiņu, lai turpinātu.</i>
@@ -38,32 +37,29 @@ export default function fss_questionaire(timeline, jsPsych) {
 
   // Izveido jautājumus
   for (let i = 0; i < ffs_questions_lv.length; i++) {
-    const ffs_item = {
-      type: SurveyLikertPlugin,
-      questions: [{
-        prompt: ffs_questions_lv[i],
-        labels: likert_labels_lv,
-        required: true,
-      }],
-      data: {
-        task: "ffs",
-        question_id: i,
-        question: ffs_questions_lv[i],
-      },
-      on_finish: function (data) {
-        data.response = data.response.Q0 + 1
-      }
-    };
-    questions.push(ffs_item);
+    questions.push({
+      prompt: ffs_questions_lv[i],
+      labels: likert_labels_lv,
+      required: true,
+    });
   }
 
-  const finish = {
-    type: HtmlKeyboardResponsePlugin,
-    stimulus: `
-        <h2>Noguruma smaguma pakāpes aptauja pabeigta!</h2>
-        <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
-      `
-  }
+  const questionaire = {
+    type: SurveyLikertPlugin,
+    questions: questions,
+    data: {
+      task: "fss",
+      questions: ffs_questions_lv,
+    },
+    on_finish: function (data) {
+      const responses = Object.values(data.response);
 
-  timeline.push(explanationScreen, ...questions, finish);
+      // Apstrādā apgrieztos jautājumus
+      data.response = responses.map((d) => {
+        return d + 1;
+      });
+    }
+  };
+
+  timeline.push(explanationScreen, questionaire);
 }

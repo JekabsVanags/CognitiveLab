@@ -5,7 +5,6 @@ export default function bfi10_questionaire(timeline, jsPsych) {
   const explanationScreen = {
     type: HtmlKeyboardResponsePlugin,
     stimulus: `
-       <b>Lielā piecinieka personības aptauja</b>
        <p>Lūdzu, novērtējiet cik lielā mērā Jūs piekrītat/nepiekrītat tālāk minētajiem apgalvojumiem.</p>
        <i>Spied jebkuru taustiņu, lai turpinātu.</i>
        `,
@@ -34,45 +33,39 @@ export default function bfi10_questionaire(timeline, jsPsych) {
   ];
 
   // Apgriezto jautājumu indeksi
-  const reversed_items = [1, 3, 4, 5, 7];
-  let questions = [];
+  const reversed_items = [0, 2, 3, 4, 6];
+
   // Izveido jautājumus
+  let questions = []
+
   for (let i = 0; i < bfi_questions_lv.length; i++) {
-    const question_number = i + 1;
-
-    const bfi_item = {
-      type: SurveyLikertPlugin,
-      questions: [{
-        prompt: `Es sevi raksturotu, kā kādu, kas ${bfi_questions_lv[i]}`,
-        labels: likert_labels_lv,
-        required: true,
-      }],
-      data: {
-        task: "bfi10",
-        question_id: i,
-        question: bfi_questions_lv[i],
-        reversed: reversed_items.includes(question_number)
-      },
-      on_finish: function (data) {
-        // Saglabā jau apgrieztus datus
-        if (data.reversed) {
-          data.response = 6 - (data.response.Q0 + 1)
-        }
-        else {
-          data.response = data.response.Q0 + 1
-        }
-      }
-    };
-    questions.push(bfi_item);
+    questions.push({
+      prompt: `Es sevi raksturotu, kā kādu, kas ${bfi_questions_lv[i]}`,
+      labels: likert_labels_lv,
+      required: true,
+    })
   }
 
-  const finish = {
-    type: HtmlKeyboardResponsePlugin,
-    stimulus: `
-        <h2>Lielā piecinieka personības aptauja pabeigta!</h2>
-        <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
-      `
-  }
+  const questionaire = {
+    type: SurveyLikertPlugin,
+    questions: questions,
+    data: {
+      task: "bfi10",
+      questions: bfi_questions_lv,
+      reversed: reversed_items
+    },
+    on_finish: function (data) {
+      const responses = Object.values(data.response);
 
-  timeline.push(explanationScreen, ...questions, finish);
+      // Apstrādā apgrieztos jautājumus
+      const adjustedResponses = responses.map((d, index) => {
+        const value = d + 1;
+        return reversed_items.includes(index) ? 6 - value : value;
+      });
+
+      data.response = adjustedResponses;
+    }
+  };
+
+  timeline.push(explanationScreen, questionaire);
 }

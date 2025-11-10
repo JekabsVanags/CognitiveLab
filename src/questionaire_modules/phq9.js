@@ -5,9 +5,7 @@ export default function phq9_questionaire(timeline, jsPsych) {
   const explanationScreen = {
     type: HtmlKeyboardResponsePlugin,
     stimulus: `
-       <b>Depresijas noteikšanas aptauja</b>
        <p>Cik bieži pēdējo 2 nedēļu laikā Jūs esat izjutis sekojošo</p>
-       <p>(1 - pilnīgi nepiekrītu, 7 - pilnīgipiekrītu)</p>
        <i>Spied jebkuru taustiņu, lai turpinātu.</i>
        `,
   };
@@ -36,32 +34,24 @@ export default function phq9_questionaire(timeline, jsPsych) {
 
   // Izveido jautājumus
   for (let i = 0; i < phq9_questions_lv.length; i++) {
-    const ffs_item = {
-      type: SurveyLikertPlugin,
-      questions: [{
-        prompt: phq9_questions_lv[i],
-        labels: labels_lv,
-        required: true,
-      }],
-      data: {
-        task: "phq9",
-        question_id: i,
-        question: phq9_questions_lv[i],
-      },
-      on_finish: function (data) {
-        data.response = data.response.Q0
-      }
-    };
-    questions.push(ffs_item);
+    questions.push({
+      prompt: phq9_questions_lv[i],
+      labels: labels_lv,
+      required: true,
+    });
   }
 
-  const finish = {
-    type: HtmlKeyboardResponsePlugin,
-    stimulus: `
-        <h2>Depresijas noteikšanas aptauja pabeigta!</h2>
-        <i>Nospied jebkuru taustiņu, lai turpinātu.</i>
-      `
-  }
+  const questionaire = {
+    type: SurveyLikertPlugin,
+    questions: questions,
+    data: {
+      task: "phq9",
+      questions: phq9_questions_lv,
+    },
+    on_finish: function (data) {
+      data.response = Object.values(data.response);
+    }
+  };
 
-  timeline.push(explanationScreen, ...questions, finish);
+  timeline.push(explanationScreen, questionaire);
 }

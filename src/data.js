@@ -48,7 +48,7 @@ export function dataProcessing(trial) {
   else if (trial.task == "bfi10") {
     return processBFI10Task(trial);
   }
-  else if (trial.task == "ffs") {
+  else if (trial.task == "fss") {
     return processSandardLikertTask(trial);
   }
   else if (trial.task == "ess") {
@@ -77,35 +77,54 @@ function processidTask(trial) {
 
 //===Process BFI-10 personality questionaire===//
 function processBFI10Task(trial) {
-  const data = {
+  const data = trial.response.map((response, index) => ({
     task: "likertSurvey",
     trial_index: trial.trial_index,
     questionaire: "bfi10",
     user_id: trial.user_id,
     experiment_name: trial.experiment_name,
-    question_id: trial.question_id,
-    question: trial.question + (trial.reversed ? " (Vērtības jau apgrieztas)" : ""),
-    response: trial.response
-  };
+    question_id: index,
+    question: trial.questions[index] + (trial.reversed.includes(index) ? " (Vērtības jau apgrieztas)" : ""),
+    response: response
+  }));
 
-  saveToDatabase(data);
+
+  data.forEach(entry => saveToDatabase(entry));
   return data;
 }
 
 function processSandardLikertTask(trial) {
-  const data = {
-    task: "likertSurvey",
-    trial_index: trial.trial_index,
-    questionaire: trial.task,
-    user_id: trial.user_id,
-    experiment_name: trial.experiment_name,
-    question_id: trial.question_id,
-    question: trial.question,
-    response: trial.response
-  };
+  if (trial.response.length > 1) {
+    const data = trial.response.map((response, index) => ({
+      task: "likertSurvey",
+      trial_index: trial.trial_index,
+      questionaire: trial.task,
+      user_id: trial.user_id,
+      experiment_name: trial.experiment_name,
+      question_id: index,
+      question: trial.questions[index],
+      response: response
+    }));
 
-  saveToDatabase(data);
-  return data;
+    console.log(data)
+    data.forEach(entry => saveToDatabase(entry));
+    return data;
+  }
+  else {
+    const data = {
+      task: "likertSurvey",
+      trial_index: trial.trial_index,
+      questionaire: trial.task,
+      user_id: trial.user_id,
+      experiment_name: trial.experiment_name,
+      question_id: trial.question_id,
+      question: trial.question,
+      response: trial.response
+    };
+
+    saveToDatabase(data);
+    return data;
+  }
 }
 //===Process Geneve emotion wheel task data===//
 function processEmotionWheelTrial(trial) {

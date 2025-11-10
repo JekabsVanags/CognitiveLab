@@ -45,11 +45,11 @@ export default function agneBergaWorkflow(timeline, jsPsych) {
   bfi10_questionaire(timeline, jsPsych);
   timeline.push(dataSavingStep(jsPsych, "bfi10"));
   fss_questionaire(timeline, jsPsych);
-  timeline.push(dataSavingStep(jsPsych, "ffs"));
-  ess_questionaire(timeline, jsPsych);
-  timeline.push(dataSavingStep(jsPsych, "ess"));
+  timeline.push(dataSavingStep(jsPsych, "fss"));
   phq9_questionaire(timeline, jsPsych);
   timeline.push(dataSavingStep(jsPsych, "phq9"));
+  ess_questionaire(timeline, jsPsych);
+  timeline.push(dataSavingStep(jsPsych, "ess"));
 
   timeline.push({
     type: FullscreenPlugin,
