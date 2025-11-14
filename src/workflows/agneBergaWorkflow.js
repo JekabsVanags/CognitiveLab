@@ -23,8 +23,8 @@ export default function agneBergaWorkflow(timeline, jsPsych) {
   introBerga(timeline, jsPsych)
   timeline.push(dataSavingStep(jsPsych, "participants"));
 
-  // geneveEmotionWheel(timeline, jsPsych)
-  // timeline.push(dataSavingStep(jsPsych, "geneveEmotionWheel"));
+  geneveEmotionWheel(timeline, jsPsych)
+  timeline.push(dataSavingStep(jsPsych, "geneveEmotionWheel"));
 
   // visualSearchTest(timeline, jsPsych, {
   //   symbol: "T",
@@ -42,14 +42,14 @@ export default function agneBergaWorkflow(timeline, jsPsych) {
   // }, false)
   // timeline.push(dataSavingStep(jsPsych, "visualSearch"));
 
-  bfi10_questionaire(timeline, jsPsych);
-  timeline.push(dataSavingStep(jsPsych, "bfi10"));
-  fss_questionaire(timeline, jsPsych);
-  timeline.push(dataSavingStep(jsPsych, "fss"));
-  phq9_questionaire(timeline, jsPsych);
-  timeline.push(dataSavingStep(jsPsych, "phq9"));
-  ess_questionaire(timeline, jsPsych);
-  timeline.push(dataSavingStep(jsPsych, "ess"));
+  // bfi10_questionaire(timeline, jsPsych);
+  // timeline.push(dataSavingStep(jsPsych, "bfi10"));
+  // fss_questionaire(timeline, jsPsych);
+  // timeline.push(dataSavingStep(jsPsych, "fss"));
+  // phq9_questionaire(timeline, jsPsych);
+  // timeline.push(dataSavingStep(jsPsych, "phq9"));
+  // ess_questionaire(timeline, jsPsych);
+  // timeline.push(dataSavingStep(jsPsych, "ess"));
 
   timeline.push({
     type: FullscreenPlugin,
