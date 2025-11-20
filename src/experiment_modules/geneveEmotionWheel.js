@@ -5,8 +5,9 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
  *
  * @param {Array} timeline - The jsPsych timeline array.
  * @param {object} jsPsych - The jsPsych instance.
+ * @param {string} trial - Trial name if different
  */
-export default function geneveEmotionWheel(timeline, jsPsych) {
+export default function geneveEmotionWheel(timeline, jsPsych, trial) {
   let emotionData = [];
 
   timeline.push({
@@ -276,7 +277,7 @@ export default function geneveEmotionWheel(timeline, jsPsych) {
     },
 
     on_finish: (data) => {
-      data.task = "geneveEmotionWheel";
+      data.task = trial ?? "geneveEmotionWheel";
       data.response = JSON.stringify(emotionData);
     }
   });

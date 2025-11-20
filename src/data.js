@@ -24,6 +24,42 @@ export function dataSavingStep(jsPsych, experiment = null) {
   )
 }
 
+export function imageEmotionDataSavingStep(jsPsych) {
+  return (
+    {
+      type: HtmlKeyboardResponsePlugin,
+      choices: "NO_KEYS",
+      trial_duration: 1000,
+      stimulus: "Dati tiek apstrādāti un saglabāti",
+      on_load: function () {
+        console.log(jsPsych.data.get().trials);
+        const filtered = jsPsych.data.get().trials.filter(
+          (d) => d.task != null && d.task == "imageEmotionClassifier"
+        );
+
+        const combinedData = [];
+        console.log(filtered)
+
+        for (let i = 0; i < filtered.length; i += 2) {
+          const first = filtered[i];
+          const second = filtered[i + 1];
+          // Merge them into one object
+          const merged = {
+            task: "imageEmotionClassifier",
+            image: first,
+            emotions: second
+          };
+          console.log(merged);
+          // Optionally process merged object
+          const processed = dataProcessing(merged);
+          if (processed) combinedData.push(processed);
+        }
+        console.log(combinedData);
+      }
+    }
+  )
+}
+
 //Function to process the experiment data
 export function dataProcessing(trial) {
 
@@ -56,6 +92,9 @@ export function dataProcessing(trial) {
   }
   else if (trial.task == "phq9") {
     return processSandardLikertTask(trial);
+  }
+  else if (trial.task == "imageEmotionClassifier") {
+    return processImageEmotionTask(trial);
   }
   else {
     return null;
@@ -144,6 +183,24 @@ function processEmotionWheelTrial(trial) {
   return data;
 }
 
+//===Process Geneve emotion wheel task data===//
+function processImageEmotionTask(trial) {
+  const emotions = JSON.parse(trial.emotions.response);
+
+  const data = emotions.map((item) => ({
+    task: "imageEmotionTask",
+    user_id: trial.emotions.user_id,
+    emotion: item.emotion,
+    intensity: item.intensity,
+    image: trial.image.image_name,
+    trial_index: trial.image.trial_index,
+    experiment_name: trial.image.experiment_name
+  }));
+
+  data.forEach(entry => saveToDatabase(entry));
+
+  return data;
+}
 
 //===Process n-back task data===//
 function processNBackTask(trial) {
@@ -330,6 +387,15 @@ export function databasePreparing(experiments) {
       tableColumns: [
         { name: "emotion", type: "varchar(255)" },
         { name: "intensity", type: "int" },
+
+      ]
+    },
+    {
+      tableName: "imageEmotionTask",
+      tableColumns: [
+        { name: "emotion", type: "varchar(255)" },
+        { name: "intensity", type: "int" },
+        { name: "image", type: "varchar(255)" },
 
       ]
     },
