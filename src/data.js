@@ -24,42 +24,6 @@ export function dataSavingStep(jsPsych, experiment = null) {
   )
 }
 
-export function imageEmotionDataSavingStep(jsPsych) {
-  return (
-    {
-      type: HtmlKeyboardResponsePlugin,
-      choices: "NO_KEYS",
-      trial_duration: 1000,
-      stimulus: "Dati tiek apstrādāti un saglabāti",
-      on_load: function () {
-        console.log(jsPsych.data.get().trials);
-        const filtered = jsPsych.data.get().trials.filter(
-          (d) => d.task != null && d.task == "imageEmotionClassifier"
-        );
-
-        const combinedData = [];
-        console.log(filtered)
-
-        for (let i = 0; i < filtered.length; i += 2) {
-          const first = filtered[i];
-          const second = filtered[i + 1];
-          // Merge them into one object
-          const merged = {
-            task: "imageEmotionClassifier",
-            image: first,
-            emotions: second
-          };
-          console.log(merged);
-          // Optionally process merged object
-          const processed = dataProcessing(merged);
-          if (processed) combinedData.push(processed);
-        }
-        console.log(combinedData);
-      }
-    }
-  )
-}
-
 //Function to process the experiment data
 export function dataProcessing(trial) {
 
@@ -93,13 +57,20 @@ export function dataProcessing(trial) {
   else if (trial.task == "phq9") {
     return processSandardLikertTask(trial);
   }
+  else if (trial.task == "tas20") {
+    return processTAS20Task(trial);
+  }
   else if (trial.task == "imageEmotionClassifier") {
     return processImageEmotionTask(trial);
+  }
+  else if (trial.task == "demographic") {
+    return processDemographicTask(trial)
   }
   else {
     return null;
   }
 }
+
 
 //===Process id collection data===//
 function processidTask(trial) {
@@ -108,6 +79,27 @@ function processidTask(trial) {
     user_id: trial.response.answer ?? "",
     trial_index: 0,
     experiment_name: trial.experiment_name
+  };
+
+  saveToDatabase(data);
+  return data;
+}
+
+//===Demographics Berga===//
+function processDemographicTask(trial) {
+  const data = {
+    task: "demographic",
+    user_id: trial.user_id ?? "",
+    trial_index: 0,
+    experiment_name: trial.experiment_name,
+    gender: trial.gender,
+    age: trial.age,
+    employment: trial.employment,
+    student: trial.student,
+    has_children: trial.has_children,
+    young_children: trial.young_children ?? 0,
+    activities: JSON.stringify(trial.activities),
+    additional_activities: JSON.stringify(trial.additional_activities)
   };
 
   saveToDatabase(data);
@@ -124,6 +116,23 @@ function processBFI10Task(trial) {
     experiment_name: trial.experiment_name,
     question_id: index,
     question: trial.questions[index] + (trial.reversed.includes(index) ? " (Vērtības jau apgrieztas)" : ""),
+    response: response
+  }));
+
+
+  data.forEach(entry => saveToDatabase(entry));
+  return data;
+}
+
+function processTAS20Task(trial) {
+  const data = trial.response.map((response, index) => ({
+    task: "likertSurvey",
+    trial_index: trial.trial_index,
+    questionaire: "tas20",
+    user_id: trial.user_id,
+    experiment_name: trial.experiment_name,
+    question_id: index,
+    question: trial.questions[index] + (trial.negative.includes(index) ? " (Vērtības jau negativizēta)" : ""),
     response: response
   }));
 
@@ -185,16 +194,16 @@ function processEmotionWheelTrial(trial) {
 
 //===Process Geneve emotion wheel task data===//
 function processImageEmotionTask(trial) {
-  const emotions = JSON.parse(trial.emotions.response);
+  const emotions = JSON.parse(trial.response);
 
   const data = emotions.map((item) => ({
     task: "imageEmotionTask",
-    user_id: trial.emotions.user_id,
+    user_id: trial.user_id,
     emotion: item.emotion,
     intensity: item.intensity,
-    image: trial.image.image_name,
-    trial_index: trial.image.trial_index,
-    experiment_name: trial.image.experiment_name
+    image: trial.image_name,
+    trial_index: trial.trial_index,
+    experiment_name: trial.experiment_name
   }));
 
   data.forEach(entry => saveToDatabase(entry));
@@ -442,6 +451,19 @@ export function databasePreparing(experiments) {
         { name: "response", type: "int" },
       ]
     },
+    {
+      tableName: "demographic",
+      tableColumns: [
+        { name: "gender", type: "int" },
+        { name: "age", type: "int" },
+        { name: "employment", type: "int" },
+        { name: "student", type: "int" },
+        { name: "has_children", type: "int" },
+        { name: "young_children", type: "int" },
+        { name: "activities", type: "JSON" },
+        { name: "additional_activities", type: "JSON" }
+      ]
+    }
   ];
 
   // Create each table if the experiment is included in the experiment list

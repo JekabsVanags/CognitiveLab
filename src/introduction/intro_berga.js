@@ -6,9 +6,37 @@ export default function introBerga(timeline, jsPsych) {
   const welcomeScreen = {
     type: HtmlKeyboardResponsePlugin,
     stimulus: `
-      <b>Paldies, ka pieteicies palīdzēt!</b>
-      <p>Eksperiments prasīs aptuveni ? minūtes.</p>
+      <p>Aicinām Jūs piedalīties pētījumā “Vairākfaktoru saistība ar vizuālo uztveri un emociju mērījumiem, izmantojot Ženēvas emociju apli",</p>
+      <p>kuru veic Agne Berga, Latvijas Universitātes doktorantūras studiju ietvaros!</p>
       <i>Lai turpinātu, lūdzu, spied jebkuru taustiņu.</i>
+      `,
+  }
+
+  const welcomeScreen2 = {
+    type: HtmlKeyboardResponsePlugin,
+    stimulus: `
+      <p>Pētījuma ietvaros tiks pārbaudīta vairākfaktoru (personības iezīmju, depresijas iezīmju,
+        noguruma izteiktība,</p><p> miegainības izteiktība) saistība ar vizuālo uztveri un izjustajām emocijām,
+        to intensitāti.</p>
+      `,
+  }
+
+  const welcomeScreen3 = {
+    type: HtmlKeyboardResponsePlugin,
+    stimulus: `
+      <p>Dalība pētījumā ir anonīma un iegūtās atbildes tiks izmantotas un analizētas tikai apkopotā veidā.</p>
+      <p>Dalība pētījumā Jums aizņems aptuveni X minūtes.</p>
+      <i>Dalība ir brīvprātīga un var tikt pārtraukta jebkurā brīdī.</i>
+      `,
+  }
+
+  const welcomeScreen4 = {
+    type: HtmlKeyboardResponsePlugin,
+    stimulus: `
+      <p>Pētījums ir apstiprināts Latvijas universitātes Humanitāro un sociālo zinātņu pētījumu ētikas
+        komitejā, Nr. X (datums). </p>
+        <p>Neskaidrību vai jautājumu gadījumā e-pasts saziņai:
+        berga.agne@gmail.com</p>
       `,
   }
 
@@ -42,11 +70,10 @@ export default function introBerga(timeline, jsPsych) {
   const fullExplanation = {
     type: FullscreenPlugin,
     message: `
-      <p>Eksperiments sastāvēs no 4 testiem un 1 uzdevuma.</p>
       <p>Nospiežot pogu, Tu piekrīti sākt eksperimentu un eksperimenta datu apstrādei.</p> `,
     button_label: "Sākt!"
   }
 
   //Add the intro screens to the timeline
-  timeline.push(welcomeScreen, autoIdScreen, fullExplanation);
+  timeline.push(welcomeScreen, welcomeScreen2, welcomeScreen3, welcomeScreen4, autoIdScreen, fullExplanation);
 }

@@ -7,8 +7,17 @@ import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
  * @param {object} jsPsych - The jsPsych instance.
  * @param {string} trial - Trial name if different
  */
-export default function geneveEmotionWheel(timeline, jsPsych, trial) {
+export default function geneveEmotionWheel(timeline, jsPsych) {
   let emotionData = [];
+
+  timeline.push({
+    type: HtmlKeyboardResponsePlugin,
+    stimulus: `<b>Lūdzu, novērtējiet pašreiz izjustās emocijas un to intensitāti</b>
+                <p>(Iespējams norādīt vairākas, vienlaicīgi izjustas emocijas un to intensitāti.</p>
+                <p>Gadījumā, ja neizjūtat šobrīd emocijas, lūgums, to norādīt. Gadījumā, ja izjūtat emocijas, kas nav norādītas aplī, iespējams norādīt papildus emocijas izvēloties opciju Cita un ierakstot to.)</p>
+                <i>Lai turpinātu, lūdzu, spied jebkuru taustiņu.</i>`
+  })
+
 
   timeline.push({
     type: HtmlKeyboardResponsePlugin,
@@ -136,7 +145,6 @@ export default function geneveEmotionWheel(timeline, jsPsych, trial) {
 
       const FIXED_OFFSET_Y = 70;
 
-      // ----- Generate Buttons -----
       emotionQuadrants.forEach((quadrant, qi) => {
         quadrant.forEach((emotion, ei) => {
           const quadrantStart = qi * (Math.PI / 2);
@@ -150,11 +158,9 @@ export default function geneveEmotionWheel(timeline, jsPsych, trial) {
           let x = radius * Math.cos(angle) + centerX;
           let y = radius * 1.2 * Math.sin(angle) + centerY;
 
-          if (qi == 0 || qi == 1) { // Augšējie kvadranti (Q1 & Q2)
-            // Visas pogas tiek pārbīdītas par -80 pikseļiem
+          if (qi == 0 || qi == 1) {
             y -= FIXED_OFFSET_Y;
-          } else { // Apakšējie kvadranti (Q3 & Q4)
-            // Visas pogas tiek pārbīdītas par +80 pikseļiem
+          } else {
             y += FIXED_OFFSET_Y;
           }
 
@@ -170,7 +176,6 @@ export default function geneveEmotionWheel(timeline, jsPsych, trial) {
 
       const buttons = document.querySelectorAll(".emotion-button");
 
-      // ===== Modal =====
       const modal = document.getElementById("rating-modal");
       const modalLabel = document.getElementById("modal-label");
       const modalButtons = document.querySelectorAll(".rating-btn");
@@ -188,7 +193,6 @@ export default function geneveEmotionWheel(timeline, jsPsych, trial) {
         if (e.target === modal) closeModal();
       });
 
-      // ===== Main Button Logic =====
       function handleEmotionButtonClick(button, emotion) {
         if (button.classList.contains("disabled")) return;
 
@@ -245,7 +249,6 @@ export default function geneveEmotionWheel(timeline, jsPsych, trial) {
         });
       });
 
-      // ----- OTHER emotion -----
       const buttonOther = document.getElementById("emotion-button-other");
       buttonOther.addEventListener("click", () => {
         if (buttonOther.classList.contains("disabled")) return;
@@ -253,7 +256,6 @@ export default function geneveEmotionWheel(timeline, jsPsych, trial) {
         if (other) handleEmotionButtonClick(buttonOther, other);
       });
 
-      // ----- NONE button -----
       const buttonNone = document.getElementById("emotion-button-none");
       buttonNone.addEventListener("click", () => {
         emotionData = [];
@@ -277,7 +279,7 @@ export default function geneveEmotionWheel(timeline, jsPsych, trial) {
     },
 
     on_finish: (data) => {
-      data.task = trial ?? "geneveEmotionWheel";
+      data.task = "geneveEmotionWheel";
       data.response = JSON.stringify(emotionData);
     }
   });
