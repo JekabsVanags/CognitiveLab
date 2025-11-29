@@ -53,6 +53,9 @@ app.post('/api/prepare_table', async (req, res) => {
   }
 
   const fullTableName = `${tableName}${suffix ?? ''}`;
+  const isSafe = /^[a-zA-Z0-9_]+$/;
+  if (!isSafe.test(fullTableName)) return res.status(400).json({ error: "Invalid table" });
+
   const columnsSQL = tableColumns.map((col) => `\`${col.name}\` ${col.type}`).join(', ');
   const createSQL = `
     CREATE TABLE IF NOT EXISTS \`${fullTableName}\` (
